@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Programme">
+<title>Programme</title>
+<style>
+:root{
+  --bg:#080808;--s1:#111;--s2:#1a1a1a;--s3:#242424;--s4:#2e2e2e;
+  --bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.12);
+  --tx:#f0f0f0;--tx2:#aaa;--tx3:#666;
+  --mg:#d946a8;--mg2:rgba(217,70,168,0.12);--mg3:rgba(217,70,168,0.22);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding-bottom:72px}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(8,8,8,.97);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border-top:1px solid var(--bd);display:flex;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 4px 8px;border:none;background:none;cursor:pointer;
+  color:var(--tx3);font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;transition:color .15s}
+.nb.on{color:var(--mg)}
+.nb svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── PAGES ── */
+.pg{display:none;padding:0 0 16px}.pg.on{display:block}
+
+/* ── SHARED HEADER ── */
+.hd{background:rgba(8,8,8,.95);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  padding:52px 18px 14px;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:20}
+.hd-row{display:flex;justify-content:space-between;align-items:baseline}
+.hd-title{font-size:24px;font-weight:700;letter-spacing:-.6px}
+.hd-sub{font-size:12px;color:var(--tx3);margin-top:2px}
+.btn-pill{font-size:12px;font-weight:700;color:var(--mg);background:var(--mg2);
+  border:none;padding:6px 14px;border-radius:20px;cursor:pointer;letter-spacing:.02em}
+
+/* ── WEEK STRIP (page Aujourd'hui) ── */
+.wk-nav{display:flex;justify-content:space-between;align-items:center;margin:12px 18px 10px}
+.wk-arr{background:none;border:none;font-size:20px;color:var(--tx3);cursor:pointer;padding:2px 0;line-height:1}
+.wk-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3)}
+.strip{display:flex;gap:3px;overflow-x:auto;padding:0 18px 2px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.sd{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 8px 8px;
+  border-radius:10px;cursor:pointer;min-width:38px;flex-shrink:0;position:relative;transition:background .1s}
+.sd.on{background:var(--s3)}
+.sd-n{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3)}
+.sd-d{font-size:15px;font-weight:600;color:var(--tx3);letter-spacing:-.2px}
+.sd.on .sd-d{color:var(--tx)}
+.sd.tod .sd-d{color:var(--mg)}
+.pip{width:5px;height:5px;border-radius:50%;background:var(--s4)}
+.pip.push,.pip.pull{background:var(--mg)}
+.pip.swim{background:#888}
+.pip.away{background:#444}
+.pip.rest{background:#333}
+.done-dot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--mg)}
+
+/* ── CONTENT PADDING ── */
+.cnt{padding:16px 18px}
+
+/* ── CARD ── */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.card-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px}
+.card-lbl-mg{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:12px}
+
+/* ── PAGE 1 : AUJOURD'HUI ── */
+.day-hero{border-radius:18px;padding:18px;margin-bottom:10px;border:1px solid rgba(255,255,255,.06);background:var(--s1)}
+.day-hero.sport{border-color:rgba(217,70,168,.2);background:rgba(217,70,168,.07)}
+.dh-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;
+  margin-bottom:10px;color:var(--mg);background:var(--mg2)}
+.dh-tag.grey{color:var(--tx3);background:var(--s3)}
+.dh-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.dh-title{font-size:21px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px;line-height:1.2}
+.dh-desc{font-size:13px;line-height:1.6;color:var(--tx2)}
+.dh-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-done{padding:9px 16px;border-radius:11px;border:none;cursor:pointer;font-size:13px;font-weight:700;background:var(--mg);color:#080808;transition:opacity .15s}
+.btn-done.is-done{background:var(--s4);color:var(--tx3)}
+.btn-start{padding:9px 16px;border-radius:11px;border:1px solid var(--bd2);cursor:pointer;font-size:13px;font-weight:700;background:none;color:var(--tx)}
+.motiv-box{border-radius:16px;padding:14px 16px;margin-bottom:10px;
+  background:linear-gradient(135deg,rgba(217,70,168,.1),rgba(217,70,168,.03));
+  border:1px solid rgba(217,70,168,.15)}
+.motiv-quote{font-size:14px;font-weight:600;line-height:1.55;color:var(--tx);margin-bottom:4px}
+.motiv-attr{font-size:11px;color:var(--tx3)}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-box{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}
+.stat-val{font-size:26px;font-weight:700;letter-spacing:-.6px;color:var(--tx)}
+.stat-val.mg{color:var(--mg)}
+.stat-lbl{font-size:11px;color:var(--tx3);margin-top:2px;font-weight:500}
+.stat-sub{font-size:10px;color:var(--tx3);margin-top:3px}
+.prog-bar-wrap{margin-bottom:10px}
+.prog-bar-lbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.prog-bar-lbl span:first-child{color:var(--tx2);font-weight:500}
+.prog-bar-lbl span:last-child{color:var(--mg);font-weight:700}
+.prog-bar{height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--mg);border-radius:3px;transition:width .4s}
+
+/* ── WEIGHT INPUT ── */
+.w-entry{display:flex;gap:8px;margin-bottom:10px}
+.w-inp{flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:10px;
+  padding:10px 12px;color:var(--tx);font-size:16px;font-weight:600;-webkit-appearance:none;outline:none}
+.w-inp:focus{border-color:var(--mg)}
+.w-btn{background:var(--mg);color:#080808;border:none;border-radius:10px;
+  padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer}
+.w-list .w-row{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.w-list .w-row:last-child{border-bottom:none}
+.w-date{color:var(--tx3)}
+.w-val{font-weight:700}
+.w-up{color:var(--mg);font-size:11px;margin-left:6px}
+.w-dn{color:var(--tx3);font-size:11px;margin-left:6px}
+.chart-wrap{height:120px;margin-top:10px}
+.chart-wrap svg{width:100%;height:100%}
+
+/* ── CAL ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
+.cal-hd{font-size:9px;font-weight:700;text-align:center;color:var(--tx3);padding:3px 0;letter-spacing:.04em}
+.cd{aspect-ratio:1;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;cursor:default}
+.cd.empty{background:none}
+.cd.rest-d{background:var(--s2);color:var(--tx3)}
+.cd.done-d{background:var(--mg);color:#080808}
+.cd.missed{background:rgba(255,255,255,.05);color:#444}
+.cd.away-d{background:var(--s2);color:#444}
+.cd.future{background:var(--s2);color:#333}
+.cd.tod{outline:2px solid var(--mg);outline-offset:1px}
+.cal-month-lbl{font-size:12px;font-weight:600;color:var(--tx3);margin:12px 0 6px}
+.cal-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--tx3);margin-top:10px}
+.cal-legend span{display:flex;align-items:center;gap:5px}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── PAGE 2 : SÉANCE ── */
+.hero{border-radius:18px;padding:18px;margin-bottom:10px}
+.hero.push,.hero.pull{background:rgba(217,70,168,.07);border:1px solid rgba(217,70,168,.18)}
+.hero.swim,.hero.rest,.hero.away{background:var(--s1);border:1px solid var(--bd)}
+.hero-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:10px}
+.push .hero-tag,.pull .hero-tag{color:var(--mg);background:var(--mg2)}
+.swim .hero-tag,.rest .hero-tag,.away .hero-tag{color:var(--tx3);background:var(--s3)}
+.tag-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.hero-title{font-size:21px;font-weight:700;letter-spacing:-.5px;margin-bottom:7px;line-height:1.2;color:var(--tx)}
+.push .hero-title,.pull .hero-title{color:var(--mg)}
+.hero-desc{font-size:13px;line-height:1.6;color:var(--tx2)}
+.hero-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-yt{padding:9px 16px;border-radius:11px;border:1px solid var(--bd2);cursor:pointer;
+  font-size:13px;font-weight:700;background:none;color:var(--tx);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.tip-row{display:flex;gap:10px;background:var(--s1);border-radius:12px;padding:11px 13px;
+  margin-bottom:10px;border:1px solid var(--bd)}
+.tip-ic{font-size:13px;color:var(--mg);font-weight:700;flex-shrink:0;margin-top:1px}
+.tip-tx{font-size:13px;line-height:1.55;color:var(--tx2)}
+.exo{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+  padding:12px 0;border-bottom:1px solid var(--bd);transition:opacity .2s}
+.exo:last-child{border-bottom:none;padding-bottom:0}
+.exo:first-child{padding-top:0}
+.exo.done-ex{opacity:.35}
+.exo-l{flex:1;min-width:0}
+.exo-name{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:3px}
+.exo-tip{font-size:12px;line-height:1.45;color:var(--tx3)}
+.exo-replaced{font-size:10px;color:var(--tx3);font-weight:500;margin-top:1px}
+.exo-alt{font-size:11px;color:var(--mg);margin-top:5px;cursor:pointer;display:inline-block;font-weight:600}
+.exo-r{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0}
+.exo-b{text-align:center;background:var(--s2);border-radius:9px;padding:7px 10px;min-width:48px}
+.exo-sets{font-size:15px;font-weight:700;color:var(--tx)}
+.exo-reps{font-size:11px;color:var(--tx3);font-weight:500;margin-top:1px}
+.sdots{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sdot{width:24px;height:24px;border-radius:50%;border:2px solid var(--s4);
+  background:none;cursor:pointer;transition:background .12s,border-color .12s;flex-shrink:0}
+.sdot.done-s{background:var(--mg);border-color:var(--mg)}
+.swim-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd);gap:12px}
+.swim-row:last-child{border-bottom:none}.swim-row:first-child{padding-top:0}
+.swim-name{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.swim-sub{font-size:12px;color:var(--tx3)}
+.swim-dur{font-size:14px;font-weight:700;color:var(--tx2);flex-shrink:0}
+
+/* ── TIMER FLOAT ── */
+#float-timer{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);
+  background:var(--s1);border:1px solid var(--bd2);border-radius:20px;
+  padding:16px 20px;z-index:50;min-width:200px;text-align:center;
+  box-shadow:0 8px 40px rgba(0,0,0,.6)}
+
+/* ── ALT MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:flex-end}
+.modal-bg.show{display:flex}
+.modal{background:var(--s1);border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));
+  width:100%;border:1px solid var(--bd)}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:3px}
+.modal-sub{font-size:12px;color:var(--tx3);margin-bottom:14px}
+.alt-opt{background:var(--s2);border-radius:13px;padding:13px;margin-bottom:8px;cursor:pointer;border:1px solid var(--bd)}
+.alt-opt:active{background:var(--s3)}
+.alt-opt-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.alt-opt-tip{font-size:12px;color:var(--tx3);line-height:1.45}
+.modal-cancel{width:100%;padding:13px;border-radius:13px;border:none;
+  background:var(--s3);color:var(--tx2);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px}
+
+/* ── CONFIGURATEUR REPAS ── */
+.cfg-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:none;flex-direction:column;overflow:hidden}
+.cfg-modal.show{display:flex}
+.cfg-header{background:var(--s1);padding:52px 18px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.cfg-title{font-size:20px;font-weight:700;letter-spacing:-.4px;margin-bottom:2px}
+.cfg-sub{font-size:12px;color:var(--tx3)}
+.cfg-close{position:absolute;top:54px;right:18px;background:var(--s3);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;color:var(--tx2);font-size:16px;display:flex;align-items:center;justify-content:center}
+.cfg-body{flex:1;overflow-y:auto;padding:14px 18px;-webkit-overflow-scrolling:touch}
+.cfg-footer{background:var(--s1);border-top:1px solid var(--bd);padding:14px 18px calc(14px + env(safe-area-inset-bottom,0px));flex-shrink:0}
+.cfg-macros{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.cfg-macro{background:var(--s2);border-radius:10px;padding:8px;text-align:center}
+.cfg-macro-val{font-size:16px;font-weight:700;color:var(--tx)}
+.cfg-macro-val.over{color:#f87171}
+.cfg-macro-val.ok{color:var(--mg)}
+.cfg-macro-lbl{font-size:10px;color:var(--tx3);font-weight:500;margin-top:1px}
+.cfg-limit-bar{height:4px;border-radius:2px;background:var(--s3);overflow:hidden;margin-top:6px}
+.cfg-limit-fill{height:100%;border-radius:2px;background:var(--mg);transition:width .3s}
+.cfg-limit-fill.over{background:#f87171}
+.cfg-apply{width:100%;padding:14px;border-radius:13px;border:none;background:var(--mg);color:#080808;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:8px}
+.cfg-apply:disabled{background:var(--s3);color:var(--tx3)}
+.cfg-reset{width:100%;padding:10px;border-radius:13px;border:none;background:none;color:var(--tx3);font-size:13px;cursor:pointer}
+.ingr-cat{margin-bottom:16px}
+.ingr-cat-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+.ingr-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)}
+.ingr-item:last-child{border-bottom:none}
+.ingr-left{flex:1;min-width:0}
+.ingr-name{font-size:14px;font-weight:500;color:var(--tx)}
+.ingr-info{font-size:11px;color:var(--tx3);margin-top:1px}
+.ingr-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--s4);flex-shrink:0;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;background:none}
+.ingr-check.on{background:var(--mg);border-color:var(--mg)}
+.ingr-check.on::after{content:'✓';color:#080808;font-size:13px;font-weight:700}
+
+/* ── PAGE 3 : NUTRITION ── */
+.nutri-day-card{border-radius:18px;padding:18px;margin-bottom:10px;
+  background:var(--s1);border:1px solid var(--bd)}
+.meal-slot{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px}
+.meal-name{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:4px}
+.meal-detail{font-size:13px;line-height:1.5;color:var(--tx2)}
+.meal-item{padding:11px 0;border-bottom:1px solid var(--bd)}
+.meal-item:first-child{padding-top:0}
+.meal-item:last-child{border-bottom:none;padding-bottom:0}
+.nutri-tip{border-radius:14px;padding:14px 16px;margin-bottom:10px;
+  background:rgba(217,70,168,.07);border:1px solid rgba(217,70,168,.15)}
+.nutri-tip-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px}
+.nutri-tip-title{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:6px}
+.nutri-tip-body{font-size:13px;line-height:1.6;color:var(--tx2)}
+.nutri-tip-why{font-size:12px;line-height:1.55;color:var(--tx3);margin-top:8px;
+  padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
+.avoid-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.avoid-item:last-child{border-bottom:none;padding-bottom:0}
+.avoid-item:first-child{padding-top:0}
+.avoid-x{color:var(--tx3);font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px;
+  width:18px;height:18px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center}
+.avoid-body{font-size:13px;line-height:1.5}
+.avoid-name{font-weight:600;color:var(--tx);margin-bottom:2px}
+.avoid-why{font-size:12px;color:var(--tx3)}
+.recipe-card{background:var(--s2);border-radius:13px;padding:13px;margin-bottom:8px;border:1px solid var(--bd)}
+.recipe-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.recipe-time{font-size:11px;color:var(--mg);font-weight:600;margin-bottom:6px}
+.recipe-steps{font-size:12px;color:var(--tx2);line-height:1.6}
+.proto-bar{margin-bottom:8px}
+.proto-lbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.proto-lbl span:first-child{color:var(--tx2)}
+.proto-lbl span:last-child{font-weight:700;color:var(--tx)}
+.proto-track{height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
+.proto-fill{height:100%;background:var(--mg);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nb on" onclick="goPage(0,this)">
+    <svg viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="13" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="2" x2="7" y2="5"/><line x1="13" y1="2" x2="13" y2="5"/></svg>
+    Aujourd'hui
+  </button>
+  <button class="nb" onclick="goPage(1,this)">
+    <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><polyline points="10,6 10,10 13,12"/></svg>
+    Séance
+  </button>
+  <button class="nb" onclick="goPage(2,this)">
+    <svg viewBox="0 0 20 20"><path d="M4 6h12M4 10h8M4 14h10"/></svg>
+    Nutrition
+  </button>
+</nav>
+
+<!-- ALT MODAL -->
+<div class="modal-bg" id="alt-modal" onclick="closeAlt(event)">
+  <div class="modal">
+    <div class="modal-title" id="alt-title"></div>
+    <div class="modal-sub">Choisir un exercice de remplacement</div>
+    <div id="alt-opts"></div>
+    <button class="modal-cancel" onclick="document.getElementById('alt-modal').classList.remove('show')">Annuler</button>
+  </div>
+</div>
+
+<!-- PAGE 0 : AUJOURD'HUI -->
+<div class="pg on" id="pg0">
+  <div class="hd">
+    <div class="hd-row">
+      <div>
+        <div class="hd-title" id="p0-title">Programme</div>
+        <div class="hd-sub" id="p0-sub"></div>
+      </div>
+      <button class="btn-pill" onclick="goToday()">Aujourd'hui</button>
+    </div>
+    <div class="wk-nav">
+      <button class="wk-arr" onclick="prevWk()">‹</button>
+      <span class="wk-lbl" id="wk-lbl"></span>
+      <button class="wk-arr" onclick="nextWk()">›</button>
+    </div>
+    <div class="strip" id="strip"></div>
+  </div>
+  <div class="cnt" id="p0-cnt"></div>
+</div>
+
+<!-- PAGE 1 : SÉANCE -->
+<div class="pg" id="pg1">
+  <div class="hd">
+    <div class="hd-row">
+      <div>
+        <div class="hd-title">Séance du jour</div>
+        <div class="hd-sub" id="p1-sub"></div>
+      </div>
+    </div>
+  </div>
+  <div class="cnt" id="p1-cnt"></div>
+</div>
+
+<!-- PAGE 2 : NUTRITION -->
+<div class="pg" id="pg2">
+  <div class="hd">
+    <div class="hd-row">
+      <div>
+        <div class="hd-title">Nutrition</div>
+        <div class="hd-sub" id="p2-sub"></div>
+      </div>
+    </div>
+  </div>
+  <div class="cnt" id="p2-cnt"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+const FRD=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const FRM=['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+const FRML=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+function dk(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return`${y}-${m}-${dd}`}
+function pd(s){const[y,m,dd]=s.split('-').map(Number);return new Date(y,m-1,dd)}
+function gw(d){const w=d.getDay(),df=w===0?-6:1-w,r=new Date(d);r.setDate(d.getDate()+df);r.setHours(0,0,0,0);return r}
+function gd(d){const k=dk(d);return PROG.find(p=>p.d===k)||null}
+function frd(d){return FRD[d.getDay()]+' '+d.getDate()+' '+FRM[d.getMonth()]}
+function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+// ══════════════════════════════════════════════════════
+// DATA — EXERCISES
+// ══════════════════════════════════════════════════════
+const ALTS={
+  'Dips entre deux chaises':[
+    {n:'Dips au bord du canapé',tip:'Assis au bord, mains sur le bord, glisse et descends. Même mouvement, plus stable.'},
+    {n:'Pompes diamant',tip:'Mains en triangle sous la poitrine. Très efficace pour les triceps.'},
+    {n:'Extension triceps isométrique',tip:'Assis, mains de chaque côté des hanches, soulève le corps et maintiens 3 sec.'}
+  ],
+  'Pike push-up':[
+    {n:'Élévation latérale bouteilles',tip:'1 bouteille 1.5L dans chaque main, bras tendus sur les côtés, monte à l\'horizontale.'},
+    {n:'Pompes pieds surélevés',tip:'Pieds sur le canapé, corps incliné. Plus le corps est vertical, plus les épaules travaillent.'},
+    {n:'Handstand mur (débutant)',tip:'Appui contre le mur, maintiens 20 sec. Progression vers le développé épaules.'}
+  ],
+  'Tirages serviette + porte':[
+    {n:'Pompes prise serrée',tip:'Mains très rapprochées (5 cm). Simule le mouvement de tirage en négatif.'},
+    {n:'Pull-over sac lesté allongé',tip:'Allongé sur le dos, sac à bout de bras, descends-le derrière la tête. Grand dorsal.'},
+    {n:'Isométrie dos contre mur',tip:'Dos au mur, coudes fléchis à 90°, pousse les coudes contre le mur 30 sec.'}
+  ],
+  'Squats lents (entretien)':[
+    {n:'Chaise squat (box squat)',tip:'Assis-debout depuis une chaise sans les mains. Tempo lent.'},
+    {n:'Montées de marches lestées',tip:'Monte et descends une marche ou tabouret avec sac lesté.'},
+    {n:'Fentes statiques',tip:'Fente avant, maintiens 3 sec en bas. Même effet d\'entretien.'}
+  ]
+};
+
+const PUSH={lbl:'Séance A — Pectoraux · Épaules · Triceps',list:[
+  {n:'Pompes classiques',s:4,r:'12–15',t:'Tempo 3/1/2 : descends en 3 sec, pause 1 sec, remonte en 2 sec. La lenteur crée la tension.'},
+  {n:'Pompes inclinées',s:3,r:'12',t:'Mains sur une chaise ou le bord du canapé. Travaille le bas des pectoraux.'},
+  {n:'Pompes déclinées',s:3,r:'10',t:'Pieds sur chaise, mains au sol. Haut des pectoraux et épaules antérieures.'},
+  {n:'Dips entre deux chaises',s:4,r:'10–12',t:'Mains sur le bord de deux chaises. Coudes dans l\'axe, corps droit.',hasAlt:true},
+  {n:'Pike push-up',s:3,r:'10',t:'Hanches en l\'air, triangle inversé, descends la tête entre les mains. Clé pour les épaules.',hasAlt:true},
+  {n:'Planche frontale',s:3,r:'45–60 sec',t:'Corps aligné talons–épaules. Serre les fessiers, respire normalement.'}
+]};
+
+const PULL={lbl:'Séance B — Dos · Biceps · Entretien jambes',list:[
+  {n:'Tirages serviette + porte',s:4,r:'12–15',t:'Noue une serviette autour d\'une poignée de porte. Incline le corps, tire vers toi. Dos et biceps.',hasAlt:true},
+  {n:'Superman allongé',s:3,r:'15',t:'Ventre au sol, bras tendus. Lève bras et jambes simultanément, tiens 2 sec. Lombaires.'},
+  {n:'Reverse snow angel',s:3,r:'12',t:'Ventre au sol, bras décollés. Monte les bras en arc. Rhomboïdes et trapèzes.'},
+  {n:'Curl biceps sac lesté',s:3,r:'12–15',t:'Sac à dos + bouteilles. Coude fixe. Supine le poignet en haut du mouvement.'},
+  {n:'Face pull serviette',s:3,r:'12',t:'Serviette à la poignée. Tire les deux bouts vers le visage en écartant les coudes.'},
+  {n:'Planche latérale',s:3,r:'30 sec',t:'Gauche puis droite. Ne laisse pas la hanche descendre.'},
+  {n:'Squats lents (entretien)',s:2,r:'15',t:'Tempo 3/1/2. Entretien seulement, pas développement.',hasAlt:true}
+]};
+
+const SWIM_PLAN=[
+  {n:'Échauffement crawl lent',s:'Très facile, trouve ton souffle',t:'8 min'},
+  {n:'Intervalles',s:'25m sprint / 25m récup × 10–12',t:'15 min'},
+  {n:'Nage continue',s:'Crawl ou brasse, allure régulière',t:'12 min'},
+  {n:'Retour au calme',s:'Très lent + étirements dans l\'eau',t:'5 min'}
+];
+
+// ══════════════════════════════════════════════════════
+// DATA — NUTRITION
+// ══════════════════════════════════════════════════════
+const BF=[
+  {n:'Skyr + avoine + banane',d:'200g skyr 0% · 50g flocons d\'avoine · 1 banane · 10 amandes · filet de miel → ~35g protéines · 3 min'},
+  {n:'Œufs brouillés & avocat',d:'3 œufs brouillés · 2 tranches pain complet grillé · ½ avocat + fleur de sel → ~26g protéines · 8 min'},
+  {n:'Smoothie protéiné',d:'200ml lait · 200g yaourt grec · 1 banane · 2 cs beurre de cacahuète · mixer la veille → ~28g protéines · 3 min'},
+  {n:'Pancakes avoine express',d:'2 œufs + 60g flocons d\'avoine mixés + 1 banane écrasée · cuire 2 min par côté · fromage blanc → ~30g protéines · 10 min'},
+  {n:'Bowl yaourt grec & fruits',d:'250g yaourt grec entier · 40g granola sans sucre · myrtilles · 1 cs graines de chia → ~22g protéines · 3 min'},
+  {n:'Toast sardines ou thon',d:'2 tranches pain complet grillé · 1 boîte sardines ou thon · câpres + citron + poivre → ~30g protéines · 5 min'},
+  {n:'Œuf poché + jambon',d:'2 œufs pochés (3 min eau frémissante) · 2 tranches jambon blanc · pain complet · moutarde → ~32g protéines · 8 min'}
+];
+
+const LUNCH={n:'Déjeuner — tes salades habituelles',d:'Riz + patate douce + poulet → meilleur choix, demande grosse portion (~45g prot). César → double poulet. Pâtes pesto → ajoute thon ou mozzarella.'};
+
+const DN=[
+  {n:'Saumon + riz + courgettes',d:'200g saumon au four 15 min (200°C) · riz cuit · courgette sautée huile d\'olive · ~45g protéines · 20 min'},
+  {n:'Omelette végétale + pain',d:'4 œufs · poivron + champignons + épinards · 2 tranches pain complet · ~30g protéines · 10 min'},
+  {n:'Poulet sauté + pâtes',d:'180g blanc de poulet en lamelles · pâtes complètes · sauce tomate + basilic · ~50g protéines · 20 min'},
+  {n:'Bol thon + riz + avocat',d:'Thon boîte (140g) · riz cuit · ½ avocat · sauce soja + sésame · style poké · ~38g protéines · 10 min'},
+  {n:'Cabillaud + lentilles',d:'150g cabillaud vapeur · 200g lentilles vertes boîte · épinards sautés à l\'ail · ~48g protéines · 15 min'},
+  {n:'Dinde + patate douce',d:'Escalope dinde (150g) · patate douce rôtie 25 min · brocoli vapeur · sauce yaourt cumin · ~50g protéines'},
+  {n:'Crevettes + nouilles de riz',d:'150g crevettes surgelées · nouilles de riz · poivron + courgette · sauce soja + sésame · ~35g protéines · 15 min'}
+];
+
+const DS=[
+  {n:'Saumon + riz (portion généreuse)',d:'Dans les 45 min après natation. 200g saumon + 200g riz + légumes. ~45g protéines.'},
+  {n:'Poulet + riz complet',d:'200g blanc de poulet · riz complet · brocoli · sauce soja. Portion riz plus grande. ~50g protéines.'},
+  {n:'Pâtes + thon + tomates cerises',d:'150g pâtes complètes · 1 boîte thon · tomates cerises · câpres + huile d\'olive. ~40g protéines · 15 min.'}
+];
+
+// Conseils nutritionnels (30 jours de rotation)
+const NUTRI_TIPS=[
+  {title:'Les protéines au petit-déjeuner',body:'Manger 25–35g de protéines le matin réduit la faim de 60% sur le reste de la journée. Les muscles se reconstituent la nuit — ils ont besoin de matière première dès le réveil.',why:'Sans protéines le matin, le corps puise dans le muscle lui-même. C\'est exactement l\'inverse de l\'objectif.'},
+  {title:'Le timing post-séance',body:'La fenêtre anabolique après l\'effort dure 30 à 45 minutes. Manger des protéines + glucides dans ce délai accélère la synthèse musculaire de 40% comparé à manger 2h après.',why:'Ton corps est comme une éponge juste après l\'effort. Il absorbe les nutriments beaucoup plus efficacement.'},
+  {title:'Pourquoi le saumon 2× par semaine',body:'Le saumon est l\'une des meilleures sources d\'oméga-3 et de vitamine D. Les oméga-3 réduisent l\'inflammation musculaire post-effort et accélèrent la récupération.',why:'Les muscles inflammés récupèrent plus lentement. Les oméga-3 sont anti-inflammatoires naturels.'},
+  {title:'L\'hydratation et la performance',body:'Être déshydraté à seulement 2% réduit les performances de 10–20%. Boire 2L par jour en semaine normale, 2.5L les jours de sport.',why:'Les muscles sont composés à 75% d\'eau. La contraction musculaire est électrochimique — sans eau, ça marche mal.'},
+  {title:'La patate douce vs les pâtes',body:'La patate douce a un index glycémique de 50 (vs 65 pour les pâtes blanches). Elle libère l\'énergie plus lentement et contient aussi de la vitamine A et du potassium.',why:'L\'énergie stable évite les pics d\'insuline qui favorisent le stockage des graisses.'},
+  {title:'Les œufs — le meilleur aliment muscle',body:'Un œuf contient 6g de protéines avec tous les acides aminés essentiels dans les proportions idéales. La leucine qu\'il contient est le déclencheur direct de la synthèse musculaire.',why:'Le profil d\'acides aminés de l\'œuf est si parfait qu\'il sert de référence pour mesurer la qualité des autres protéines.'},
+  {title:'Alcool et masse musculaire',body:'L\'alcool bloque la synthèse protéique pendant 24–48h. Il réduit aussi le taux de testostérone et perturbe le sommeil profond — qui est le moment où 70% de la croissance musculaire se produit.',why:'Deux verres le soir d\'une séance peuvent annuler une grande partie des bénéfices de l\'entraînement.'},
+  {title:'Le skyr : pourquoi c\'est mieux que le yaourt',body:'Le skyr contient 3× plus de protéines que le yaourt classique (11g/100g vs 3.5g) pour la même quantité de calories. Il est aussi très faible en lipides et en sucres.',why:'À calories égales, le skyr est l\'une des sources de protéines les plus denses qui existent.'},
+  {title:'Les lentilles — protéines végétales',body:'Les lentilles contiennent 9g de protéines pour 100g cuites. Combinées à des céréales (riz, pâtes), elles forment une protéine complète avec tous les acides aminés.',why:'Les protéines végétales seules sont incomplètes. L\'association lentilles + céréales les rend aussi efficaces que la viande.'},
+  {title:'Le beurre de cacahuète',body:'2 cuillères à soupe = 8g de protéines + bonnes graisses (oméga-6) + magnésium. C\'est un des ajouts les plus faciles au petit-déjeuner pour booster les macros.',why:'Le magnésium intervient dans plus de 300 réactions enzymatiques, dont la synthèse des protéines musculaires.'},
+  {title:'Manger 4h avant de dormir',body:'Le dernier repas 3–4h avant le coucher optimise la production de GH (hormone de croissance) pendant le sommeil. L\'estomac plein perturbe les phases de sommeil profond.',why:'80% de la GH est sécrétée pendant le sommeil profond. C\'est l\'hormone principale de la reconstruction musculaire.'},
+  {title:'Les graisses — ne pas les éviter',body:'Les lipides sont essentiels à la production de testostérone. Un régime trop pauvre en graisses réduit les niveaux d\'hormones anaboliques. Privilégie avocat, huile d\'olive, noix.',why:'La testostérone est synthétisée à partir du cholestérol. Sans graisses alimentaires suffisantes, la production chute.'},
+  {title:'Le thon en boîte — allié du soir tardif',body:'1 boîte de thon (140g) = 34g de protéines pour 150 kcal, en 30 secondes. C\'est l\'option de secours idéale les soirs où tu rentres à 21h sans envie de cuisiner.',why:'La continuité nutritionnelle est plus importante que la qualité perfectionniste. Un bon repas vaut mieux que pas de repas.'},
+  {title:'Le sucre lent avant l\'effort',body:'Manger des glucides complexes 1–2h avant une séance (riz, flocons d\'avoine, pain complet) améliore les performances de 15–20% en donnant du glycogène aux muscles.',why:'Le glycogène est le carburant direct du muscle. Comme une voiture, il faut faire le plein avant de rouler.'},
+  {title:'La créatine naturelle',body:'Le bœuf, le poulet et le saumon contiennent naturellement de la créatine. Elle améliore la force et la récupération en augmentant les réserves d\'énergie rapide (ATP) dans le muscle.',why:'C\'est pourquoi les athlètes de force mangent beaucoup de viande — bien avant que la supplémentation existe.'},
+  {title:'Le sodium et la récupération',body:'Après la natation et la sudation, le sodium est éliminé. Ne pas hésiter à saler légèrement les repas post-effort. Le sodium aide à retenir l\'eau dans les cellules musculaires.',why:'Les crampes post-effort sont souvent dues à un déficit en sodium et magnésium, pas en eau.'},
+  {title:'Les flocons d\'avoine',body:'50g de flocons d\'avoine = 6g de protéines + 27g de glucides complexes + 4g de fibres. L\'index glycémique de 55 assure une énergie stable pendant 3–4h.',why:'L\'énergie stable le matin évite le coup de fatigue de 10h qui pousse à grignoter du sucre.'},
+  {title:'Pourquoi manger avant 8h',body:'Le cortisol (hormone du stress) est au plus haut entre 6h et 9h. Il dégrade le muscle pour produire du glucose. Manger des protéines tôt interrompt ce catabolisme.',why:'Ton corps se décompose littéralement si tu sautes le petit-déjeuner. Ce n\'est pas une métaphore.'},
+  {title:'Le yaourt grec vs fromage blanc',body:'Le yaourt grec (10g/100g de protéines) est légèrement supérieur au fromage blanc 0% (8g/100g). Les deux sont d\'excellentes sources de caséine — protéine à digestion lente.',why:'La caséine libère ses acides aminés sur 5–7h. Parfaite avant le coucher pour nourrir les muscles toute la nuit.'},
+  {title:'Les amandes — la bonne collation',body:'10 amandes = 3g de protéines + bonnes graisses + vitamine E. La vitamine E est un antioxydant puissant qui réduit les dommages oxydatifs après l\'effort.',why:'L\'effort physique génère des radicaux libres qui endommagent les fibres musculaires. Les antioxydants neutralisent ce stress.'},
+  {title:'Le café avant la séance',body:'La caféine prise 30–60 min avant l\'effort améliore les performances de 12–15% en mobilisant les acides gras comme source d\'énergie. 1 café normal suffit.',why:'La caféine bloque l\'adénosine, le neurotransmetteur de la fatigue. Elle augmente aussi la libération d\'adrénaline.'},
+  {title:'L\'importance des légumes verts',body:'Épinards, brocoli, haricots verts : sources de fer, magnésium, vitamine K et nitrates naturels. Les nitrates améliorent l\'efficacité de l\'oxygène dans le muscle de 2–3%.',why:'Les muscles ont besoin d\'oxygène pour fonctionner. Plus ils l\'utilisent efficacement, plus longtemps tu peux t\'entraîner.'},
+  {title:'Manger varié — la règle des couleurs',body:'Essaie d\'avoir 3 couleurs différentes de légumes/fruits dans la journée. Chaque couleur correspond à des micronutriments différents, tous utiles à la récupération.',why:'Les vitamines et minéraux sont des cofacteurs enzymatiques. Sans eux, les protéines que tu manges ne peuvent pas être utilisées.'},
+  {title:'Le gingembre anti-courbatures',body:'Le gingembre frais ou en poudre réduit significativement les courbatures post-effort grâce à ses propriétés anti-inflammatoires. Ajoute-en dans tes sauces et vinaigrettes.',why:'Il inhibe les mêmes voies inflammatoires que l\'ibuprofène, sans les effets secondaires gastro-intestinaux.'},
+  {title:'Les glucides le soir après sport',body:'Contrairement à l\'idée reçue, manger des glucides le soir après une séance est bénéfique. Ils reconstituent les réserves de glycogène qui alimenteront la prochaine séance.',why:'Le stockage de glycogène est prioritaire après l\'effort — ces glucides vont dans les muscles, pas en graisse.'},
+  {title:'Le zinc et la testostérone',body:'Le zinc est indispensable à la production de testostérone. Les meilleures sources : viandes rouges, noix de cajou, graines de citrouille, légumineuses.',why:'Une carence en zinc réduit la testostérone de 25%. C\'est l\'un des déficits les plus fréquents chez les sportifs.'},
+  {title:'Cuire les œufs sans les brûler',body:'Les œufs trop cuits (blancs brûlés, jaunes noircis) ont une digestibilité réduite de 30%. Cuire à feu doux. Les protéines dénaturées par trop de chaleur sont moins bien absorbées.',why:'La structure 3D des protéines change avec la chaleur excessive. Le corps met plus de temps à les décomposer.'},
+  {title:'Les chips et aliments ultra-transformés',body:'Les additifs et émulsifiants des aliments ultra-transformés perturbent le microbiome intestinal. Or 60% des acides aminés sont absorbés par l\'intestin. Un intestin abîmé absorbe moins de protéines.',why:'Tu peux manger parfaitement en surface, mais si l\'intestin n\'absorbe pas bien, les nutriments passent sans profiter.'},
+  {title:'L\'huile d\'olive — bonne graisse quotidienne',body:'2 cs d\'huile d\'olive par jour réduisent l\'inflammation chronique et fournissent des polyphénols protecteurs. Utilise-la crue (vinaigrette) pour préserver ses qualités.',why:'Chauffée à haute température, l\'huile d\'olive perd ses polyphénols. Pour la cuisson, préfère l\'huile de coco ou le beurre.'},
+  {title:'Fractionner les protéines',body:'Répartir les protéines sur 3–4 repas (25–40g par repas) est plus efficace qu\'une grande quantité en un seul repas. Le muscle ne peut synthétiser qu\'environ 40g de protéines à la fois.',why:'Manger 120g de protéines au dîner ne donne pas les mêmes résultats que 40g au PdJ + 40g au déjeuner + 40g au dîner.'}
+];
+
+const AVOID=[
+  {n:'Alcool',w:'Bloque la synthèse protéique 24–48h et réduit la testostérone. Un verre occasionnel passe, plusieurs soirs par semaine = effort annulé.'},
+  {n:'Pain blanc, viennoiseries',w:'Pic glycémique suivi d\'un crash d\'énergie à 10h. Aucune protéine. Remplace par pain complet ou flocons d\'avoine.'},
+  {n:'Charcuterie industrielle',w:'Graisses saturées élevées, peu de protéines réelles, excès de sodium. Garde pour les apéros occasionnels.'},
+  {n:'Jus de fruits et sodas',w:'Sucres rapides liquides = stockage direct en graisse. L\'absence de fibres supprime l\'effet rassasiant du fruit. Eau, café, thé.'},
+  {n:'Plats surgelés ultra-transformés',w:'Additifs qui perturbent le microbiome intestinal. Absorption des protéines réduite même si le repas semble équilibré.'},
+  {n:'Sauter le petit-déjeuner',w:'Le cortisol matinal dégrade le muscle pour produire du glucose. Sans PdJ protéiné, tu perds du muscle avant même de commencer la journée.'}
+];
+
+// Alternatives PdJ
+const BF_ALT=[
+  {n:'Œuf poché + jambon + pain complet',d:'2 œufs pochés (3 min eau frémissante) · 2 tranches jambon blanc · 1 tranche pain complet · moutarde → ~32g protéines · 8 min'},
+  {n:'Toast sardines ou thon',d:'2 tranches pain complet grillé · 1 boîte sardines ou thon · câpres + citron + poivre → ~30g protéines · 5 min'},
+  {n:'Bowl yaourt grec + granola + miel',d:'250g yaourt grec · 40g granola sans sucre · myrtilles · 1 cs graines de chia · miel → ~22g protéines · 3 min'},
+  {n:'Fromage blanc + flocons + fruits rouges',d:'200g fromage blanc 0% · 50g flocons d\'avoine · poignée fruits rouges surgelés · 10 amandes → ~28g protéines · 3 min'},
+  {n:'Pain complet + beurre de cacahuète + banane',d:'2 tranches pain complet grillé · 2 cs beurre de cacahuète · 1 banane · verre de lait → ~22g protéines · 4 min'}
+];
+
+// Alternatives dîner
+const DN_ALT=[
+  {n:'Thon en boîte + riz + tomates',d:'1 boîte thon (140g) · riz sachet micro-ondes · tomates cerises · huile d\'olive + sel → ~36g protéines · 5 min'},
+  {n:'Omelette 3 œufs + pain complet',d:'3 œufs · sel + poivre · 2 tranches pain complet grillé · salade verte → ~25g protéines · 8 min'},
+  {n:'Poulet rôti acheté + légumes vapeur',d:'200g poulet rôti traiteur · brocoli ou haricots verts micro-ondes 4 min → ~45g protéines · 5 min'},
+  {n:'Sardines + pain complet + salade',d:'1 boîte sardines + 2 tranches pain complet + grande salade verte + vinaigrette → ~30g protéines · 5 min'},
+  {n:'Lentilles + œufs durs',d:'200g lentilles vertes boîte réchauffées · 2 œufs durs (9 min) · vinaigrette moutarde → ~30g protéines · 12 min'}
+];
+
+// Recettes par date — une par jour, couvrant le programme complet
+// Liées au dîner du jour (ou au PdJ si c'est un repas du matin)
+// slot: 'bf'=petit-déj, 'lunch'=déjeuner, 'dinner'=dîner
+const RECIPES_BY_DATE={
+  '2026-06-17':{title:'Saumon au four + courgettes sautées',slot:'dinner',time:'20 min · ~45g protéines',steps:'1. Préchauffe le four à 200°C.\n2. Pose un filet de saumon (200g) sur papier cuisson, huile d\'olive + sel + citron.\n3. Enfourne 14–16 min.\n4. Pendant ce temps, coupe une courgette en rondelles, 3 min à la poêle avec huile d\'olive et ail.\n5. Accompagne de riz (sachet micro-ondes 2 min).\nAstuce : prépare 2 portions de riz pour demain matin.'},
+  '2026-06-18':{title:'Bol thon-riz-avocat (poké maison)',slot:'dinner',time:'10 min · ~38g protéines',steps:'1. Réchauffe du riz cuit d\'avance (sachet micro-ondes 2 min).\n2. Égoutte 1 boîte de thon (140g).\n3. Coupe ½ avocat en dés.\n4. Sauce : 1 cs sauce soja + ½ cc vinaigre de riz + sésame + gingembre.\n5. Monte dans un bol, ajoute concombre en dés si tu as.\n6. Mange dans les 45 min après la natation.'},
+  '2026-06-19':{title:'Pancakes avoine & banane',slot:'bf',time:'10 min · ~30g protéines',steps:'1. Mixe 60g de flocons d\'avoine en farine grossière.\n2. Ajoute 2 œufs + 1 banane écrasée + une pincée de sel.\n3. Mélange jusqu\'à obtenir une pâte épaisse.\n4. Cuis à feu moyen, 2 min par côté.\n5. Sers avec 200g fromage blanc 0% et un filet de miel.\nParfait pour partir en montagne avec de l\'énergie.'},
+  '2026-06-20':{title:'Œufs brouillés & avocat en montagne',slot:'bf',time:'8 min · ~26g protéines',steps:'1. Bats 3 œufs avec sel, poivre et une cs de lait.\n2. Fais fondre une noix de beurre à feu doux.\n3. Verse les œufs, remue doucement avec une spatule — ne les laisse pas sécher.\n4. Retire du feu dès qu\'ils sont encore légèrement coulants (ils continuent de cuire).\n5. Sers sur 2 tranches de pain complet grillé + ½ avocat.'},
+  '2026-06-21':{title:'Poulet sauté + pâtes complètes sauce tomate',slot:'dinner',time:'20 min · ~50g protéines',steps:'1. Fais cuire 150g de pâtes complètes (10 min eau bouillante salée).\n2. Coupe 180g de blanc de poulet en lamelles.\n3. Saute le poulet 5 min à l\'huile d\'olive avec ail + sel.\n4. Ajoute une boîte de tomates concassées, herbes de Provence, sel.\n5. Simule 3 min, mélange avec les pâtes égouttées.\n6. Parmesan dessus. Bon repas de retour de montagne.'},
+  '2026-06-22':{title:'Cabillaud vapeur + lentilles à l\'ail',slot:'dinner',time:'15 min · ~48g protéines',steps:'1. Ouvre une boîte de lentilles vertes (400g), rince et réchauffe à la casserole.\n2. Ajoute 2 gousses d\'ail émincées, sel, poivre, cumin.\n3. Pose le filet de cabillaud (150g) dans une passoire au-dessus de la casserole avec un couvercle.\n4. Laisse cuire à la vapeur des lentilles 6–8 min.\n5. Sers avec des épinards frais tombés 2 min à la poêle.'},
+  '2026-06-23':{title:'Dinde + patate douce rôtie + brocoli',slot:'dinner',time:'30 min · ~50g protéines',steps:'1. Coupe 1 patate douce en cubes, huile d\'olive + sel + paprika. Four 220°C, 25 min.\n2. Cuis le brocoli au micro-ondes dans son sachet (4 min).\n3. Poêle l\'escalope de dinde (150g) 4 min par côté à feu moyen.\n4. Sauce rapide : 1 yaourt nature + ½ cc cumin + sel + jus citron.\n5. Dresse patate douce + dinde + brocoli, sauce dessus.'},
+  '2026-06-24':{title:'Crevettes sautées + nouilles de riz',slot:'dinner',time:'15 min · ~35g protéines',steps:'1. Décongèle 150g de crevettes dans un bol d\'eau froide (5 min).\n2. Trempe des nouilles de riz dans de l\'eau chaude (3 min selon paquet).\n3. Saute les crevettes 3 min à l\'huile de sésame avec ail et gingembre.\n4. Ajoute les nouilles égouttées + 2 cs sauce soja + poivre.\n5. Ajoute un sachet de légumes surgelés asiatiques si tu veux.\nIdéal dans les 45 min après la natation.'},
+  '2026-06-25':{title:'Omelette aux légumes + pain complet',slot:'dinner',time:'10 min · ~30g protéines',steps:'1. Fais revenir ½ poivron rouge + champignons émincés 3 min à la poêle.\n2. Bats 4 œufs avec sel et poivre.\n3. Verse les œufs sur les légumes, baisse le feu.\n4. Couvre 2 min — l\'omelette doit rester moelleuse, pas sèche.\n5. Sers avec 2 tranches de pain complet grillé.\nAjoute des épinards surgelés décongelés si tu veux plus de volume.'},
+  '2026-06-26':{title:'Bol skyr granola myrtilles',slot:'bf',time:'3 min · ~22g protéines',steps:'1. Verse 250g de yaourt grec entier ou skyr dans un bol.\n2. Ajoute 40g de granola sans sucre ajouté.\n3. Ajoute une poignée de myrtilles fraîches ou surgelées (décongèlent en 1 min).\n4. 1 cs de graines de chia.\n5. Filet de miel optionnel.\nPrépare tout la veille dans un bocal et mets au frigo pour gagner du temps.'},
+  '2026-06-27':{title:'Saumon + lentilles corail épicées',slot:'dinner',time:'20 min · ~46g protéines',steps:'1. Fais cuire 100g de lentilles corail dans 300ml de bouillon (15 min, elles fondent).\n2. Ajoute curry, gingembre, sel en fin de cuisson.\n3. Pose le saumon (200g) dans une poêle chaude, 3 min par côté.\n4. Sers le saumon sur les lentilles, avec quelques feuilles d\'épinards frais.\nAprès la natation : mange dans les 45 min.'},
+  '2026-06-28':{title:'Toast sardines & citron',slot:'bf',time:'5 min · ~30g protéines',steps:'1. Grille 2 tranches de pain complet.\n2. Ouvre une boîte de sardines à l\'huile (ou au citron), égoutte légèrement.\n3. Pose les sardines sur les toasts, écrase légèrement à la fourchette.\n4. Câpres + jus de citron frais + poivre noir concassé.\n5. Une orange pressée à côté pour les vitamines.\nLa sardine est l\'une des meilleures sources de protéines + oméga-3.'},
+  '2026-06-29':{title:'Poulet rôti express + haricots verts',slot:'dinner',time:'25 min · ~48g protéines',steps:'1. Coupe 200g de blanc de poulet en gros morceaux. Huile d\'olive + herbes de Provence + sel.\n2. Enfourne à 200°C sur papier cuisson, 20 min.\n3. Pendant ce temps, cuis 200g de haricots verts (vapeur micro-ondes 4 min).\n4. Assaisonne les haricots : huile d\'olive + ail en poudre + fleur de sel.\n5. Sers avec du riz complet (sachet micro-ondes).'},
+  '2026-06-30':{title:'Bol thon avocat express',slot:'dinner',time:'10 min · ~38g protéines',steps:'1. Réchauffe du riz cuit d\'avance.\n2. Ouvre 1 boîte de thon (140g), égoutte.\n3. ½ avocat en tranches.\n4. Sauce : 1 cs sauce soja + ½ cc vinaigre de riz + sésame.\n5. Tomates cerises coupées en deux.\nDernier soir avant le déplacement — simple et efficace.'},
+  '2026-07-01':{title:'Omelette jambon fromage',slot:'dinner',time:'10 min · ~35g protéines',steps:'1. Bats 3 œufs avec sel et poivre.\n2. Fais chauffer une poêle à feu doux avec beurre.\n3. Verse les œufs, laisse prendre 1 min.\n4. Pose 2 tranches de jambon blanc + 30g de fromage râpé sur une moitié.\n5. Rabats l\'autre moitié. Sers avec pain complet.\nFacile à faire dans un hôtel avec un minimum d\'équipement.'},
+  '2026-07-02':{title:'Yaourt grec miel amandes (hôtel)',slot:'bf',time:'2 min · ~20g protéines',steps:'1. Demande un yaourt nature au petit-déjeuner de l\'hôtel.\n2. Ajoute le miel disponible sur la table.\n3. Prends une poignée de muesli ou granola du buffet.\n4. Si dispo : fruits frais (banane, pomme).\nEn déplacement, adapte avec ce que le buffet propose — l\'important c\'est les protéines.'},
+  '2026-07-03':{title:'Blanc de poulet salade verte',slot:'dinner',time:'5 min (resto/traiteur)',steps:'1. Commande ou achète un blanc de poulet grillé (150–200g).\n2. Accompagne de salade verte avec vinaigrette huile d\'olive.\n3. Ajoute des tomates cerises et œufs durs si disponibles.\n4. Pain complet à côté.\nEn déplacement : privilégie toujours la protéine grillée sur les plats en sauce.'},
+  '2026-07-04':{title:'Saumon + quinoa (resto ou traiteur)',slot:'dinner',time:'Repas à l\'extérieur',steps:'1. Choisis un plat avec poisson grillé ou saumon au menu.\n2. Accompagnement : quinoa, riz ou légumes — pas de frites.\n3. Évite les sauces crèmes lourdes.\n4. Une salade en entrée si tu as faim.\nAbsent toute la journée : mange bien le soir pour compenser.'},
+  '2026-07-05':{title:'Crevettes + riz basmati + épinards',slot:'dinner',time:'15 min · ~36g protéines',steps:'1. Décongèle 150g crevettes (eau froide 5 min).\n2. Cuis du riz basmati (sachet 2 min).\n3. Saute les crevettes 3 min avec ail, huile d\'olive, sel.\n4. Ajoute 2 grosses poignées d\'épinards frais, couvre 1 min.\n5. Mélange avec le riz, poivre noir, jus de citron.\nBon repas de retour à la maison.'},
+  '2026-07-06':{title:'Omelette 4 œufs + légumes variés',slot:'dinner',time:'10 min · ~30g protéines',steps:'1. Bats 4 œufs avec sel et poivre.\n2. Fais revenir : champignons + poivron + courgette émincés, 4 min.\n3. Verse les œufs sur les légumes, feu doux, couvercle 2 min.\n4. Ajoute du fromage râpé avant de couvrir si tu veux.\n5. Pain complet grillé en accompagnement.\nJour de repos — repas léger mais protéiné.'},
+  '2026-07-07':{title:'Dinde marinée + patate douce + haricots',slot:'dinner',time:'25 min · ~52g protéines',steps:'1. Marine l\'escalope de dinde (150g) : huile d\'olive + paprika fumé + ail + sel, 10 min.\n2. Enfourne la patate douce en cubes à 220°C (25 min).\n3. Poêle la dinde 4 min par côté.\n4. Réchauffe des haricots blancs en boîte avec ail et romarin.\n5. Dresse : dinde + patate douce + haricots. Sauce yaourt cumin.'},
+  '2026-07-08':{title:'Bol saumon riz avocat (post-natation)',slot:'dinner',time:'15 min · ~45g protéines',steps:'1. Fais cuire un filet de saumon (200g) à la poêle, 3 min par côté.\n2. Riz sachet micro-ondes (2 min).\n3. ½ avocat en lamelles.\n4. Sauce : 1 cs sauce soja + sésame + quelques gouttes d\'huile de sésame.\n5. Monte le bol. Mange dans les 45 min après la natation.\nRégénère le glycogène + protéines pour la récupération.'},
+  '2026-07-09':{title:'Cabillaud + purée de pois chiches',slot:'dinner',time:'20 min · ~46g protéines',steps:'1. Égoutte une boîte de pois chiches (400g), mixe avec 2 cs huile d\'olive + jus citron + sel + cumin → houmous maison épais.\n2. Poêle ou vapeur le cabillaud (150g) 6–8 min.\n3. Sers le cabillaud sur le houmous chaud.\n4. Ajoute des tomates cerises rôties 10 min au four en même temps.\n5. Feuilles de persil frais si tu en as.'},
+  '2026-07-10':{title:'Poulet + pâtes complètes + pesto maison',slot:'dinner',time:'20 min · ~48g protéines',steps:'1. Cuis 150g de pâtes complètes (10 min eau bouillante).\n2. Poêle 180g de blanc de poulet coupé en dés, 6 min.\n3. Pesto express : mixe basilic frais + 2 cs huile d\'olive + parmesan + pignons ou amandes.\n4. Mélange pâtes égouttées + poulet + pesto.\n5. Parmesan râpé dessus.\nAprès la natation : mange dans les 45 min.'},
+  '2026-07-11':{title:'Œufs pochés + jambon + salade',slot:'dinner',time:'10 min · ~32g protéines',steps:'1. Porte de l\'eau à frémissement (pas ébullition), ajoute 1 cs vinaigre blanc.\n2. Casse les œufs un par un dans une tasse, glisse doucement dans l\'eau.\n3. Laisse 3 min, récupère avec une écumoire.\n4. Dresse sur une assiette avec 2 tranches jambon blanc + salade verte + vinaigrette.\n5. Pain complet à côté.\nJour de repos — repas léger.'},
+  '2026-07-12':{title:'Pancakes protéinés avoine banane',slot:'bf',time:'10 min · ~30g protéines',steps:'1. Mixe 60g de flocons d\'avoine.\n2. Ajoute 2 œufs + 1 banane écrasée + 1 cs de beurre de cacahuète + pincée de sel.\n3. Pâte épaisse — ajoute 1 cs de lait si trop dense.\n4. Cuis à feu moyen, 2 min par côté.\n5. Sers avec du skyr 0% et des fruits rouges.\nParfait dimanche matin.'},
+  '2026-07-13':{title:'Curry de crevettes léger + riz basmati',slot:'dinner',time:'20 min · ~38g protéines',steps:'1. Fais revenir 1 oignon émincé 3 min dans l\'huile de coco.\n2. Ajoute 1 cc de curry + ½ cc de gingembre en poudre + 1 cc de curcuma.\n3. Ajoute 150g de crevettes décortiquées, mélange 2 min.\n4. Verse 200ml de lait de coco léger, simule 5 min.\n5. Sers sur riz basmati (sachet micro-ondes).'},
+  '2026-07-14':{title:'Steak de thon + légumes grillés',slot:'dinner',time:'15 min · ~42g protéines',steps:'1. Coupe courgette + poivron + aubergine en tranches épaisses.\n2. Huile d\'olive + sel + herbes. Poêle-grill ou four 15 min à 200°C.\n3. Saisis le steak de thon 1–2 min par côté (doit rester rosé au centre).\n4. Sauce vierge : tomates cerises coupées + basilic + huile d\'olive + sel.\n5. Sers le thon sur les légumes, sauce dessus.'},
+  '2026-07-15':{title:'Saumon + riz noir + épinards',slot:'dinner',time:'20 min · ~46g protéines',steps:'1. Fais cuire du riz noir (ou riz complet) selon paquet.\n2. Saumon (200g) au four 14 min à 200°C, sel + citron + herbes.\n3. Saute des épinards frais 2 min avec ail et huile d\'olive.\n4. Dresse : riz noir + épinards + saumon.\n5. Graines de sésame + trait de sauce soja.\nAprès la natation longue : mange copieusement.'},
+  '2026-07-16':{title:'Blanquette de poulet express',slot:'dinner',time:'25 min · ~48g protéines',steps:'1. Coupe 200g de blanc de poulet en morceaux.\n2. Fais revenir avec 1 oignon 3 min dans beurre.\n3. Ajoute 200ml de bouillon de poule + 1 cs de crème légère + sel + poivre.\n4. Simule 15 min à couvert.\n5. Sers sur riz blanc ou avec du pain complet.\nVariation : remplace la crème par du yaourt nature ajouté hors feu.'},
+  '2026-07-17':{title:'Crevettes à l\'ail + quinoa',slot:'dinner',time:'15 min · ~38g protéines',steps:'1. Cuis 80g de quinoa dans 180ml d\'eau (12 min).\n2. Décongèle 150g de crevettes (eau froide 5 min).\n3. Saute les crevettes avec 3 gousses d\'ail émincées + beurre + sel, 3 min.\n4. Ajoute persil haché + jus de citron.\n5. Sers sur le quinoa avec quelques tomates cerises.\nAprès natation : dans les 45 min.'},
+  '2026-07-18':{title:'Toast jambon cru + œuf mollet',slot:'bf',time:'8 min · ~28g protéines',steps:'1. Porte de l\'eau à ébullition, mets 2 œufs 6 min exactement, refroidis dans l\'eau froide.\n2. Grille 2 tranches de pain complet.\n3. Écale les œufs délicatement, coupe en deux — le jaune doit être coulant.\n4. Pose 2 tranches de jambon cru sur les toasts + les demi-œufs.\n5. Sel, poivre, trait d\'huile d\'olive.'},
+  '2026-07-19':{title:'Cabillaud en papillote + légumes',slot:'dinner',time:'20 min · ~44g protéines',steps:'1. Sur une feuille de papier cuisson : pose le cabillaud (180g).\n2. Ajoute rondelles de courgette + tomates cerises + olives + herbes.\n3. Huile d\'olive + sel + jus de citron + thym.\n4. Referme en papillote hermétiquement. Four 200°C, 18 min.\n5. Ouvre à table — tout le jus reste dans la papillote.'},
+  '2026-07-20':{title:'Bowl bilan mi-parcours : poulet thaï',slot:'dinner',time:'20 min · ~50g protéines',steps:'1. Cuis 200g de blanc de poulet 6 min à la poêle, laisse refroidir, effiloche.\n2. Sauce thaï : 2 cs sauce soja + 1 cs beurre de cacahuète + 1 cc miel + jus citron vert + piment.\n3. Mélange le poulet effiloché avec la sauce.\n4. Sers sur riz ou nouilles de riz avec concombre + carottes râpées.\n5. Coriandre fraîche et cacahuètes concassées si tu as.'},
+  '2026-07-21':{title:'Saumon teriyaki + edamame + riz',slot:'dinner',time:'20 min · ~47g protéines',steps:'1. Marinade teriyaki : 2 cs sauce soja + 1 cs miel + ½ cc gingembre.\n2. Marine le saumon (200g) 10 min.\n3. Poêle le saumon mariné 3 min par côté — la marinade caramélise.\n4. Chauffe des edamames surgelés 3 min au micro-ondes.\n5. Sers sur riz basmati, sauce teriyaki restante versée dessus.'},
+  '2026-07-22':{title:'Velouté de lentilles corail + tartines',slot:'dinner',time:'20 min · ~32g protéines',steps:'1. Fais revenir 1 oignon + 1 carotte en dés 3 min.\n2. Ajoute 150g de lentilles corail + 600ml de bouillon + curry + cumin.\n3. Cuis 15 min, mixe.\n4. Sers avec 2 tartines de pain complet + fromage blanc.\n5. Graines de courge grillées dessus.\nAprès natation : ajoute un œuf dur pour plus de protéines.'},
+  '2026-07-23':{title:'Dinde aux champignons + pâtes',slot:'dinner',time:'20 min · ~50g protéines',steps:'1. Cuis 150g de pâtes complètes.\n2. Coupe 150g d\'escalope de dinde en lanières.\n3. Saute la dinde 3 min, réserve.\n4. Dans la même poêle, saute 200g de champignons tranchés avec ail + beurre.\n5. Remet la dinde, ajoute 1 cs de crème + sel + persil.\n6. Mélange avec les pâtes égouttées.'},
+  '2026-07-24':{title:'Bol poké saumon mariné',slot:'dinner',time:'15 min · ~44g protéines',steps:'1. Coupe 200g de saumon frais très frais en dés (ou utilise du saumon fumé).\n2. Marine 10 min dans : sauce soja + huile de sésame + citron vert.\n3. Riz sachet micro-ondes.\n4. Dresse : riz + saumon + avocat + edamame + concombre.\n5. Sauce : reste de marinade + mayonnaise légère.\nAprès la natation vendredi soir.'},
+  '2026-07-25':{title:'Frittata aux légumes du frigo',slot:'dinner',time:'20 min · ~28g protéines',steps:'1. Préchauffe le four à 180°C.\n2. Fais revenir ce que tu as : courgette, poivron, épinards, oignon — 5 min à la poêle.\n3. Bats 5 œufs avec sel, poivre et une cs de parmesan.\n4. Verse sur les légumes dans la poêle, mélange légèrement.\n5. Enfourne 10 min jusqu\'à ce que le dessus soit ferme.\nIdéal pour vider le frigo le weekend.'},
+  '2026-07-26':{title:'Chicken bowl épicé',slot:'dinner',time:'25 min · ~50g protéines',steps:'1. Épices : paprika fumé + cumin + ail en poudre + sel + huile d\'olive → frotte 200g de poulet.\n2. Four 200°C, 20 min.\n3. Cuis du riz complet (sachet).\n4. Sauce : 1 yaourt + ½ cc cumin + ail + citron + sel.\n5. Dresse : riz + poulet coupé + tomates cerises + avocat + sauce yaourt.\n6. Herbes fraîches si tu as.'},
+  '2026-07-27':{title:'Skyr aux fruits rouges & graines',slot:'bf',time:'3 min · ~24g protéines',steps:'1. Verse 200g de skyr dans un bol.\n2. Ajoute une grosse poignée de fruits rouges (surgelés ou frais).\n3. 1 cs de graines de lin moulues + 1 cs de graines de chia.\n4. 30g de flocons d\'avoine.\n5. Filet de miel, quelques amandes.\nVariation : prépare dans un bocal la veille — tout à fait prêt le matin.'},
+  '2026-07-28':{title:'Saumon + brocoli + riz complet',slot:'dinner',time:'20 min · ~46g protéines',steps:'1. Riz complet sachet micro-ondes (2 min).\n2. Brocoli en fleurettes, micro-ondes 4 min.\n3. Filet de saumon (200g) poêlé 3 min par côté avec ail + beurre.\n4. Sauce : 1 cs de miso délayé dans 2 cs d\'eau chaude + trait de sauce soja.\n5. Dresse : riz + brocoli + saumon, sauce miso dessus.'},
+  '2026-07-29':{title:'Thon + pâtes complètes + câpres',slot:'dinner',time:'15 min · ~40g protéines',steps:'1. Cuis 150g de pâtes complètes.\n2. Dans une poêle : huile d\'olive + 2 gousses d\'ail + 1 boîte de thon égouttée.\n3. Ajoute câpres + olives + tomates cerises coupées, chauffe 2 min.\n4. Mélange avec les pâtes égouttées.\n5. Persil haché + poivre + parmesan.\nAprès la dernière natation.'},
+  '2026-07-30':{title:'Poulet rôti + haricots verts + ail',slot:'dinner',time:'25 min · ~48g protéines',steps:'1. Badigeonne 200g de blanc de poulet : huile d\'olive + romarin + ail émincé + sel.\n2. Four 200°C, 20 min.\n3. Haricots verts vapeur micro-ondes 4 min.\n4. Assaisonne les haricots : huile d\'olive + ail en poudre + fleur de sel.\n5. Accompagne de riz (sachet).\nAvant-dernière soirée du programme.'},
+  '2026-07-31':{title:'Cabillaud au citron + quinoa + tomates',slot:'dinner',time:'20 min · ~44g protéines',steps:'1. Cuis 80g de quinoa dans 200ml d\'eau (12 min).\n2. Poêle le cabillaud (180g) 3 min par côté avec beurre + citron + persil.\n3. Tomates cerises rôties 10 min au four (en même temps si possible).\n4. Dresse : quinoa + cabillaud + tomates rôties.\n5. Filet d\'huile d\'olive + fleur de sel.\nDernier soir du programme — soigne le repas.'}
+};
+
+// ══════════════════════════════════════════════════════
+// INGREDIENTS DATABASE
+// ══════════════════════════════════════════════════════
+// Each ingredient: {n, cal, p (protein g), g (carbs g), f (fat g), unit}
+const INGR = {
+  proteines: {
+    label: 'Protéines',
+    items: [
+      {n:'Blanc de poulet',cal:165,p:31,g:0,f:3.6,unit:'150g'},
+      {n:'Saumon',cal:208,p:28,g:0,f:11,unit:'150g'},
+      {n:'Thon en boîte',cal:140,p:34,g:0,f:1,unit:'boîte 140g'},
+      {n:'Cabillaud',cal:105,p:23,g:0,f:1,unit:'150g'},
+      {n:'Crevettes',cal:100,p:21,g:1,f:1,unit:'150g'},
+      {n:'Dinde escalope',cal:155,p:29,g:0,f:3,unit:'150g'},
+      {n:'Œufs entiers',cal:140,p:12,g:1,f:10,unit:'2 œufs'},
+      {n:'Jambon blanc',cal:80,p:13,g:1,f:2,unit:'2 tranches'},
+      {n:'Sardines boîte',cal:190,p:23,g:0,f:11,unit:'boîte 100g'},
+      {n:'Fromage blanc 0%',cal:60,p:8,g:4,f:0,unit:'200g'},
+      {n:'Skyr',cal:65,p:11,g:4,f:0,unit:'200g'},
+      {n:'Yaourt grec',cal:130,p:10,g:5,f:7,unit:'200g'},
+    ]
+  },
+  feculents: {
+    label: 'Féculents & céréales',
+    items: [
+      {n:'Riz blanc cuit',cal:130,p:2.7,g:28,f:0.3,unit:'150g'},
+      {n:'Riz complet cuit',cal:140,p:3,g:29,f:1,unit:'150g'},
+      {n:'Pâtes complètes cuites',cal:175,p:6,g:35,f:1,unit:'150g'},
+      {n:'Quinoa cuit',cal:120,p:4.4,g:21,f:1.9,unit:'150g'},
+      {n:'Flocons d\'avoine',cal:190,p:6.5,g:33,f:3.5,unit:'50g'},
+      {n:'Pain complet',cal:140,p:6,g:26,f:1.5,unit:'2 tranches'},
+      {n:'Patate douce rôtie',cal:115,p:2,g:26,f:0.1,unit:'150g'},
+      {n:'Lentilles vertes cuites',cal:115,p:9,g:20,f:0.4,unit:'200g'},
+      {n:'Pois chiches cuits',cal:165,p:9,g:27,f:2.6,unit:'200g'},
+      {n:'Nouilles de riz cuites',cal:110,p:1.6,g:25,f:0.2,unit:'150g'},
+    ]
+  },
+  legumes: {
+    label: 'Légumes',
+    items: [
+      {n:'Épinards frais',cal:20,p:2.5,g:1.5,f:0.4,unit:'100g'},
+      {n:'Brocoli vapeur',cal:35,p:3,g:5,f:0.4,unit:'150g'},
+      {n:'Courgette sautée',cal:30,p:2,g:5,f:0.3,unit:'150g'},
+      {n:'Poivron rouge',cal:30,p:1,g:6,f:0.3,unit:'1 moyen'},
+      {n:'Champignons poêlés',cal:25,p:2,g:3,f:0.5,unit:'100g'},
+      {n:'Tomates cerises',cal:25,p:1,g:4,f:0.3,unit:'100g'},
+      {n:'Haricots verts vapeur',cal:35,p:2,g:7,f:0.1,unit:'150g'},
+      {n:'Concombre',cal:15,p:0.6,g:2.5,f:0.1,unit:'½ concombre'},
+      {n:'Salade verte',cal:15,p:1.3,g:2,f:0.2,unit:'grande portion'},
+      {n:'Aubergine grillée',cal:35,p:1,g:7,f:0.2,unit:'150g'},
+    ]
+  },
+  graisses: {
+    label: 'Bonnes graisses & extras',
+    items: [
+      {n:'Avocat',cal:160,p:2,g:9,f:15,unit:'½ avocat'},
+      {n:'Huile d\'olive',cal:90,p:0,g:0,f:10,unit:'1 cs'},
+      {n:'Amandes',cal:100,p:3.5,g:3,f:9,unit:'20 amandes'},
+      {n:'Beurre de cacahuète',cal:190,p:8,g:6,f:16,unit:'2 cs'},
+      {n:'Graines de chia',cal:70,p:2,g:5,f:4.5,unit:'1 cs'},
+      {n:'Parmesan râpé',cal:110,p:10,g:0,f:7,unit:'30g'},
+      {n:'Noix',cal:130,p:3,g:3,f:13,unit:'30g'},
+    ]
+  },
+  sauces: {
+    label: 'Sauces & condiments',
+    items: [
+      {n:'Sauce soja (1 cs)',cal:10,p:1,g:1,f:0,unit:'1 cs'},
+      {n:'Yaourt nature sauce',cal:55,p:5,g:4,f:2,unit:'1 yaourt'},
+      {n:'Jus de citron',cal:5,p:0,g:1,f:0,unit:'½ citron'},
+      {n:'Miel',cal:60,p:0,g:16,f:0,unit:'1 cs'},
+    ]
+  }
+};
+
+const INGR_LIMITS = {
+  bf:  {cal:500,  p:35,  label:'Petit-déjeuner', note:'Objectif : 25–35g protéines, 400–500 kcal'},
+  din: {cal:650,  p:45,  label:'Dîner',           note:'Objectif : 40–50g protéines, 500–650 kcal'}
+};
+
+// ══════════════════════════════════════════════════════
+// DATA — PROGRAMME
+// ══════════════════════════════════════════════════════
+const MOTIVS=[
+  {q:'Le corps arrive toujours en retard sur l\'effort. Ce que tu fais aujourd\'hui, tu le vois dans 3 semaines.',a:'Principe de supercompensation'},
+  {q:'La régularité bat toujours l\'intensité. Une séance moyenne faite vaut plus qu\'une séance parfaite reportée.',a:''},
+  {q:'Les courbatures d\'aujourd\'hui sont la force de la semaine prochaine.',a:''},
+  {q:'Tu ne te bats pas contre les poids. Tu te bats contre hier.',a:''},
+  {q:'Le muscle ne se construit pas pendant l\'effort. Il se construit pendant le repos qui suit.',a:'Physiologie musculaire'},
+  {q:'Chaque série que tu termines change ta composition corporelle. Imperceptiblement. Cumulativement.',a:''},
+  {q:'La natation est le seul sport qui travaille 80% des muscles sans charger les articulations.',a:''},
+  {q:'Manger bien un jour ne change rien. Manger bien 42 jours change tout.',a:''},
+  {q:'Le petit-déjeuner n\'est pas un repas. C\'est un signal envoyé à tes hormones.',a:''},
+  {q:'La progression n\'est jamais linéaire. Les plateaux font partie du processus.',a:''},
+  {q:'Ton cerveau renonce toujours avant tes muscles. Reconnais cette voix et continue.',a:''},
+  {q:'Trois mois de régularité valent mieux qu\'un an d\'intentions.',a:''},
+  {q:'Le sommeil est une séance d\'entraînement. Celle où le muscle se construit vraiment.',a:''},
+  {q:'La fatigue que tu ressens en fin de séance, c\'est exactement l\'endroit où tu progresses.',a:''},
+];
+
+const PROG=[
+  {d:'2026-06-17',t:'push',l:'Séance A — Push',x:'Première séance. Commence par les minimums de reps. Pompes, dips, pike push-up, planche. 30 min suffit.',tip:'Les courbatures arriveront demain ou après-demain — les fibres musculaires se reconstruisent plus fortes.'},
+  {d:'2026-06-18',t:'swim',l:'Natation',x:'Natation après le bureau (19h ou 20h). 40 min. Échauffement long, travaille les épaules et le dos.',tip:'La natation recrute exactement les muscles cibles : épaules, dos, pectoraux. Deux séances par semaine font une vraie différence.'},
+  {d:'2026-06-19',t:'away',l:'Départ montagne',x:'Pas de sport organisé. Marche si tu arrives tôt. Mange protéiné le soir.'},
+  {d:'2026-06-20',t:'away',l:'Week-end montagne',x:'La randonnée compte. Profites-en. 20 pompes au réveil si tu veux, totalement optionnel.'},
+  {d:'2026-06-21',t:'away',l:'Retour montagne',x:'Retour en soirée. Bon repas protéiné au retour.'},
+  {d:'2026-06-22',t:'rest',l:'Repos',x:'Lundi = repos systématique. Étirements 10 min le soir.'},
+  {d:'2026-06-23',t:'pull',l:'Séance B — Pull',x:'Tirages serviette, superman, reverse angel, curls, face pull. 35 min.',tip:'Le tirage à la serviette est plus efficace qu\'il n\'y paraît — cherche une poignée de porte bien solide.'},
+  {d:'2026-06-24',t:'swim',l:'Natation',x:'Intervalles : 25m vite puis 25m récup × 10–12. 40 min total. Plus intense que la première séance.'},
+  {d:'2026-06-25',t:'rest',l:'Repos actif',x:'Marche 20 min si tu peux. Étirements épaules et dos (10 min).'},
+  {d:'2026-06-26',t:'push',l:'Séance A — Push',x:'Sortie tôt (17–18h). Séance complète pompes + dips + épaules. 35 min.',tip:'Tu devrais sentir une légère progression par rapport à mercredi.'},
+  {d:'2026-06-27',t:'swim',l:'Natation (bonus)',x:'Deuxième natation si tu as l\'énergie. Excellent pour les épaules. Sinon repos — c\'est un bonus.'},
+  {d:'2026-06-28',t:'rest',l:'Repos',x:'Repos complet.'},
+  {d:'2026-06-29',t:'rest',l:'Repos',x:'Lundi = repos.'},
+  {d:'2026-06-30',t:'pull',l:'Séance B — Pull',x:'Séance importante avant l\'absence. Donne tout. 35 min.',tip:'Dernière vraie séance avant 5 jours. Fais-la complète.'},
+  {d:'2026-07-01',t:'away',l:'Absent · déplacement',x:'Si piscine → nage 30 min. Sinon : 3×15 pompes + 3×12 dips, 10 min.',tip:'Garder le signal musculaire actif, pas progresser.'},
+  {d:'2026-07-02',t:'away',l:'Absent',x:'20 pompes + 10 dips le matin. 5 minutes.'},
+  {d:'2026-07-03',t:'away',l:'Absent',x:'Idem. 20 pompes + 10 dips.'},
+  {d:'2026-07-04',t:'away',l:'Absent toute la journée',x:'Repos complet.'},
+  {d:'2026-07-05',t:'away',l:'Retour',x:'Retour. Repos. Bon repas ce soir.'},
+  {d:'2026-07-06',t:'rest',l:'Repos',x:'Lundi = repos. Récupération du voyage.'},
+  {d:'2026-07-07',t:'push',l:'Séance A+ — Push intensifié',x:'Reprise. Passe à 4 séries sur tout. La mémoire musculaire fonctionne.',tip:'Ne sois pas surpris si tu te sens fort dès aujourd\'hui. La mémoire musculaire est réelle.'},
+  {d:'2026-07-08',t:'swim',l:'Natation',x:'Reprends les intervalles. 40 min. Pousse plus qu\'avant l\'absence.'},
+  {d:'2026-07-09',t:'pull',l:'Séance B+ — Pull intensifié',x:'4 séries sur tout. Augmente le poids du sac si possible.',tip:'Si tu trouves une barre de traction, essaie — bien meilleur que les tirages serviette.'},
+  {d:'2026-07-10',t:'swim',l:'Natation (bonus)',x:'Sortie tôt vendredi. Deuxième natation.'},
+  {d:'2026-07-11',t:'rest',l:'Repos',x:'Semaine chargée. Récupère.'},
+  {d:'2026-07-12',t:'rest',l:'Repos',x:'Repos dimanche.'},
+  {d:'2026-07-13',t:'rest',l:'Repos',x:'Lundi = repos.'},
+  {d:'2026-07-14',t:'push',l:'Séance A+ — Push',x:'Séance complète 4 séries. La différence avec la semaine 1 est claire.',tip:'Si les pompes classiques deviennent faciles, ajoute 3 sec de pause en bas.'},
+  {d:'2026-07-15',t:'swim',l:'Natation — séance longue',x:'45 min si tu peux. Crawl prioritaire pour les épaules.'},
+  {d:'2026-07-16',t:'pull',l:'Séance B+ — Pull',x:'Si tu trouves une barre de traction, remplace les tirages serviette.',tip:'La traction est le roi des exercices de dos.'},
+  {d:'2026-07-17',t:'swim',l:'Natation',x:'Sortie tôt vendredi. Deuxième natation.'},
+  {d:'2026-07-18',t:'push',l:'Séance A légère (optionnelle)',x:'3 séries seulement, 20 min. Bonus si tu as l\'énergie.'},
+  {d:'2026-07-19',t:'rest',l:'Repos',x:'Repos. Pèse-toi demain matin.'},
+  {d:'2026-07-20',t:'rest',l:'Repos · bilan mi-parcours',x:'Pèse-toi ce matin. Les épaules et la poitrine ont changé.'},
+  {d:'2026-07-21',t:'push',l:'Séance A+ — Push',x:'Programme complet, 4 séries, bons tempos.'},
+  {d:'2026-07-22',t:'swim',l:'Natation',x:'Belle séance. 40–45 min.'},
+  {d:'2026-07-23',t:'pull',l:'Séance B+ — Pull',x:'Séance complète 4 séries.'},
+  {d:'2026-07-24',t:'swim',l:'Natation',x:'Sortie tôt vendredi.'},
+  {d:'2026-07-25',t:'rest',l:'Repos',x:'Repos.'},
+  {d:'2026-07-26',t:'rest',l:'Repos',x:'Repos dimanche.'},
+  {d:'2026-07-27',t:'rest',l:'Repos',x:'Lundi = repos.'},
+  {d:'2026-07-28',t:'push',l:'Séance A — Push',x:'Avant-dernière séance.'},
+  {d:'2026-07-29',t:'swim',l:'Natation',x:'Dernière natation du programme.'},
+  {d:'2026-07-30',t:'pull',l:'Séance B — Pull',x:'Dernière séance de muscu.'},
+  {d:'2026-07-31',t:'rest',l:'Bilan final',x:'Pèse-toi. Note les changements. +1.5 à 2.5 kg de masse maigre attendus. Tu pars en congés avec une vraie base.',tip:'6 semaines de régularité. C\'est exactement ce qu\'il fallait.'}
+];
+
+const TLBL={push:'Muscu Push',pull:'Muscu Pull',swim:'Natation',rest:'Repos',away:'Absent'};
+const YT='https://music.youtube.com/playlist?list=RDCLAK5uy_kmPRjHDECIcuVwnKsx2Ng7fyspnMkZtdo';
+
+// ══════════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════════
+let done_days      = load('done_days',{});
+let weights        = load('weights',[]);
+let sess_prog      = load('sess_prog',{});
+let replacements   = load('replacements',{});
+let meal_repls     = load('meal_repls',{});  // {'date-bf': altIdx, 'date-din': altIdx}
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+const TR=new Date();TR.setHours(0,0,0,0);
+const ST=pd('2026-06-17'),EN=pd('2026-07-31');
+let cur=new Date(TR);
+let ws=gw(cur);
+let timerInt=null,timerSec=60,timerRunning=false,timerDur=60;
+let _altCtx={};
+
+// ══════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════
+function goPage(i,btn){
+  document.querySelectorAll('.pg').forEach((p,j)=>p.classList.toggle('on',j===i));
+  document.querySelectorAll('.nb').forEach((b,j)=>b.classList.toggle('on',j===i));
+  if(i===0)renderP0();
+  if(i===1)renderP1();
+  if(i===2)renderP2();
+}
+
+// ══════════════════════════════════════════════════════
+// WEEK STRIP
+// ══════════════════════════════════════════════════════
+function rStrip(){
+  const el=document.getElementById('strip');
+  el.innerHTML='';
+  for(let i=0;i<7;i++){
+    const d=new Date(ws);d.setDate(ws.getDate()+i);
+    const data=gd(d),t=data?data.t:'rest';
+    const on=dk(d)===dk(cur),tod=dk(d)===dk(TR)&&!on;
+    const isDone=done_days[dk(d)];
+    const b=document.createElement('div');
+    b.className='sd'+(on?' on':'')+(tod?' tod':'');
+    b.innerHTML=`<span class="sd-n">${FRD[d.getDay()]}</span><span class="sd-d">${d.getDate()}</span><span class="pip ${t}"></span>${isDone?'<span class="done-dot"></span>':''}`;
+    b.onclick=()=>{cur=new Date(d);renderP0();renderP1();renderP2();rStrip()};
+    el.appendChild(b);
+  }
+  setTimeout(()=>{const a=el.querySelector('.on');if(a)a.scrollIntoView({inline:'center',behavior:'smooth',block:'nearest'})},40);
+  const e=new Date(ws);e.setDate(ws.getDate()+6);
+  document.getElementById('wk-lbl').textContent=ws.getDate()+' '+FRM[ws.getMonth()]+' – '+e.getDate()+' '+FRM[e.getMonth()];
+}
+function prevWk(){ws.setDate(ws.getDate()-7);cur=new Date(ws);rStrip();renderP0();renderP1();renderP2()}
+function nextWk(){ws.setDate(ws.getDate()+7);cur=new Date(ws);rStrip();renderP0();renderP1();renderP2()}
+function goToday(){cur=new Date(TR);ws=gw(cur);rStrip();renderP0();renderP1();renderP2()}
+
+// ══════════════════════════════════════════════════════
+// PAGE 0 — AUJOURD'HUI
+// ══════════════════════════════════════════════════════
+function renderP0(){
+  document.getElementById('p0-title').textContent=frd(cur);
+  const data=gd(cur);
+  const el=document.getElementById('p0-cnt');
+  const key=dk(cur);
+  const isTodayPage=dk(cur)===dk(TR);
+  let h='';
+
+  // Out of program
+  if(!data){
+    const after=cur>EN;
+    document.getElementById('p0-sub').textContent=after?'Programme terminé':'Avant le programme';
+    h+=`<div class="card" style="text-align:center;padding:28px 16px">
+      <div style="font-size:28px;font-weight:700;color:var(--mg);margin-bottom:8px">${after?'★':'○'}</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">${after?'Programme terminé':'Programme pas encore commencé'}</div>
+      <div style="font-size:13px;color:var(--tx2);line-height:1.6">${after?'Le programme s\'est terminé le 31 juillet. Profite des congés — on repart fin août.':'Le programme démarre le 17 juin 2026.'}</div>
+    </div>`;
+    el.innerHTML=h;return;
+  }
+
+  const t=data.t;
+  const isSport=t==='push'||t==='pull'||t==='swim';
+  const isDone=done_days[key];
+  document.getElementById('p0-sub').textContent={push:'Séance Push',pull:'Séance Pull',swim:'Natation',rest:'Repos',away:'Absent · hors programme'}[t];
+
+  // MOTIVATION — tous les jours, rotation selon la date consultée
+  const mi=(cur.getDate()+cur.getMonth()*31)%MOTIVS.length;
+  const m=MOTIVS[mi];
+  h+=`<div class="motiv-box"><div class="motiv-quote">"${m.q}"</div>${m.a?`<div class="motiv-attr">— ${m.a}</div>`:''}</div>`;
+
+  // DAY SUMMARY HERO
+  h+=`<div class="day-hero ${isSport?'sport':''}">
+    <div class="dh-tag ${isSport?'':'grey'}"><span class="dh-dot"></span>${TLBL[t]}</div>
+    <div class="dh-title">${data.l}</div>
+    <div class="dh-desc">${data.x}</div>
+    ${(t==='push'||t==='pull')?`<div class="dh-actions">
+      <button class="btn-start" onclick="goPage(1,document.querySelectorAll('.nb')[1])">Démarrer la séance →</button>
+    </div>`:''}
+  </div>`;
+
+  // STATS GRID
+  const allSport=PROG.filter(p=>p.t==='push'||p.t==='pull'||p.t==='swim');
+  const totalDone=allSport.filter(p=>done_days[p.d]).length;
+  const streak=calcStreak();
+  const pct=Math.round(totalDone/Math.max(1,allSport.length)*100);
+  h+=`<div class="stat-row">
+    <div class="stat-box"><div class="stat-val mg">${totalDone}</div><div class="stat-lbl">Séances faites</div><div class="stat-sub">sur ${allSport.length} prévues</div></div>
+    <div class="stat-box"><div class="stat-val mg">${streak}</div><div class="stat-lbl">Jours de suite</div><div class="stat-sub">streak actuel</div></div>
+  </div>`;
+
+  // PROGRESS BAR
+  h+=`<div class="card"><div class="card-lbl">Progression du programme</div>
+    <div class="prog-bar-wrap"><div class="prog-bar-lbl"><span>Séances effectuées</span><span>${pct}%</span></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+    <div class="prog-bar-wrap" style="margin-bottom:0"><div class="prog-bar-lbl"><span>Semaines</span><span>${weekNum()} / 6</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(100,weekNum()/6*100)}%"></div></div></div>
+  </div>`;
+
+  // WEIGHT
+  h+=`<div class="card"><div class="card-lbl">Suivi du poids</div>
+    <div class="w-entry"><input class="w-inp" type="number" id="w-inp" placeholder="70.0" step="0.1" min="40" max="150"><button class="w-btn" onclick="addWeight()">+</button></div>`;
+  if(weights.length>=2)h+=`<div class="chart-wrap">${drawChart()}</div>`;
+  if(weights.length>0){
+    h+='<div class="w-list">';
+    [...weights].reverse().slice(0,4).forEach((w,i,arr)=>{
+      const prev=arr[i+1];let diff='';
+      if(prev){const d=(w.v-prev.v).toFixed(1);diff=`<span class="${parseFloat(d)>0?'w-up':'w-dn'}">${parseFloat(d)>0?'+':''}${d} kg</span>`}
+      h+=`<div class="w-row"><span class="w-date">${w.d.slice(5)}</span><span class="w-val">${w.v} kg${diff}</span></div>`;
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // CALENDAR
+  h+=`<div class="card"><div class="card-lbl">Calendrier</div>${drawCal()}<div class="cal-legend"><span><span class="leg-dot" style="background:var(--mg)"></span>Fait</span><span><span class="leg-dot" style="background:#222"></span>Raté</span><span><span class="leg-dot" style="background:#1a1a1a"></span>Repos</span></div></div>`;
+
+  el.innerHTML=h;
+}
+
+function weekNum(){
+  const diff=Math.floor((TR-ST)/(7*86400000));
+  return Math.max(1,Math.min(6,diff+1));
+}
+function calcStreak(){
+  let s=0,d=new Date(TR);
+  while(true){
+    const key=dk(d);
+    const prog=gd(d);
+    const isSport=prog&&(prog.t==='push'||prog.t==='pull'||prog.t==='swim');
+    const isRest=!prog||prog.t==='rest'||prog.t==='away';
+    if(isSport&&done_days[key])s++;
+    else if(isSport&&!done_days[key]&&d<TR)break;
+    d.setDate(d.getDate()-1);
+    if(d<ST)break;
+  }
+  return s;
+}
+function toggleDone(key){done_days[key]=!done_days[key];save('done_days',done_days);rStrip();renderP0()}
+function addWeight(){
+  const v=parseFloat(document.getElementById('w-inp').value);
+  if(isNaN(v)||v<40||v>150)return;
+  const t=dk(TR);
+  const ei=weights.findIndex(w=>w.d===t);
+  if(ei>=0)weights[ei].v=v;else weights.push({d:t,v});
+  weights.sort((a,b)=>a.d.localeCompare(b.d));
+  save('weights',weights);renderP0();
+}
+function drawChart(){
+  if(weights.length<2)return'';
+  const W=300,H=100,px=24,py=16;
+  const vals=weights.map(w=>w.v);
+  const mn=Math.min(...vals)-0.5,mx=Math.max(...vals)+0.5;
+  const x=i=>px+(i/(weights.length-1))*(W-2*px);
+  const y=v=>H-py-((v-mn)/(mx-mn))*(H-2*py);
+  const pts=weights.map((w,i)=>`${x(i)},${y(w.v)}`).join(' ');
+  const area=`${x(0)},${H-py} `+weights.map((w,i)=>`${x(i)},${y(w.v)}`).join(' ')+` ${x(weights.length-1)},${H-py}`;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d946a8" stop-opacity=".25"/><stop offset="100%" stop-color="#d946a8" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${area}" fill="url(#cg)"/>
+    <polyline points="${pts}" fill="none" stroke="#d946a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  weights.forEach((w,i)=>{
+    svg+=`<circle cx="${x(i)}" cy="${y(w.v)}" r="3.5" fill="#d946a8"/>`;
+    if(i===0||i===weights.length-1)svg+=`<text x="${x(i)}" y="${y(w.v)-8}" text-anchor="middle" font-size="10" fill="#aaa" font-weight="600">${w.v}</text>`;
+  });
+  svg+=`<text x="${x(0)}" y="${H-2}" text-anchor="middle" font-size="9" fill="#555">${weights[0].d.slice(5)}</text>`;
+  svg+=`<text x="${x(weights.length-1)}" y="${H-2}" text-anchor="middle" font-size="9" fill="#555">${weights[weights.length-1].d.slice(5)}</text>`;
+  svg+='</svg>';
+  return svg;
+}
+function drawCal(){
+  const months=[{y:2026,m:5},{y:2026,m:6}];
+  let h='';
+  months.forEach(({y,m})=>{
+    h+=`<div class="cal-month-lbl">${FRML[m]}</div><div class="cal-grid">`;
+    ['L','M','M','J','V','S','D'].forEach(d=>h+=`<div class="cal-hd">${d}</div>`);
+    const first=new Date(y,m,1).getDay(),offset=first===0?6:first-1;
+    const days=new Date(y,m+1,0).getDate();
+    for(let i=0;i<offset;i++)h+=`<div class="cd empty"></div>`;
+    for(let d=1;d<=days;d++){
+      const date=new Date(y,m,d),key=dk(date);
+      const prog=gd(date),isToday=key===dk(TR),isFuture=date>TR;
+      const isDone=done_days[key];
+      const isSport=prog&&(prog.t==='push'||prog.t==='pull'||prog.t==='swim');
+      const isAway=prog&&prog.t==='away';
+      let cls='cd';
+      if(isToday)cls+=' tod';
+      if(isAway)cls+=' away-d';
+      else if(!prog||prog.t==='rest')cls+=' rest-d';
+      else if(isFuture)cls+=' future';
+      else if(isDone)cls+=' done-d';
+      else if(isSport)cls+=' missed';
+      else cls+=' rest-d';
+      h+=`<div class="${cls}">${d}</div>`;
+    }
+    h+='</div>';
+  });
+  return h;
+}
+
+// ══════════════════════════════════════════════════════
+// PAGE 1 — SÉANCE
+// ══════════════════════════════════════════════════════
+function renderP1(){
+  const data=gd(cur),key=dk(cur);
+  document.getElementById('p1-sub').textContent=frd(cur);
+  const el=document.getElementById('p1-cnt');
+  if(!data){el.innerHTML='<div class="card" style="text-align:center;padding:24px;color:var(--tx3)">Hors programme.</div>';return}
+  const t=data.t,isDone=done_days[key];
+  let h='';
+
+  h+=`<div class="hero ${t}">
+    <div class="hero-tag"><span class="tag-dot"></span>${TLBL[t]}</div>
+    <div class="hero-title">${data.l}</div>
+    <div class="hero-desc">${data.x}</div>
+    <div class="hero-actions">
+      ${t==='push'||t==='pull'?`<button class="btn-done ${isDone?'is-done':''}" onclick="toggleDone2('${key}')">${isDone?'✓ Fait':'Marquer comme fait'}</button>`:''}
+      ${t==='push'||t==='pull'||t==='swim'?`<a class="btn-yt" href="${YT}" target="_blank">▶ Playlist</a>`:''}
+    </div>
+  </div>`;
+
+  if(data.tip)h+=`<div class="tip-row"><span class="tip-ic">!</span><span class="tip-tx">${data.tip}</span></div>`;
+
+  if(t==='push')h+=exoCard(PUSH,key);
+  else if(t==='pull')h+=exoCard(PULL,key);
+  else if(t==='swim')h+=swimCard();
+  else h+=`<div class="card"><div style="text-align:center;padding:20px 0;color:var(--tx3);font-size:14px">${t==='rest'?'Journée de repos. Étirements optionnels 10 min.':'Pas de séance prévue ce jour.'}</div></div>`;
+
+  el.innerHTML=h;
+}
+
+function exoCard(plan,dayKey){
+  const sp=sess_prog[dayKey]||{};
+  let h=`<div class="card"><div class="card-lbl">${plan.lbl}</div>`;
+  plan.list.forEach((e,i)=>{
+    const ex=resolveExo(e,i,dayKey);
+    const doneS=sp[i]||0,allDone=doneS>=ex.s;
+    let dots='<div class="sdots">';
+    for(let s=0;s<ex.s;s++)dots+=`<span class="sdot ${s<doneS?'done-s':''}" onclick="tapSeries('${dayKey}',${i},${ex.s},${s+1},event,${plan.list.length})"></span>`;
+    dots+='</div>';
+    h+=`<div class="exo ${allDone?'done-ex':''}">
+      <div class="exo-l">
+        <div class="exo-name">${ex.n}${ex.replaced?'<span class="exo-replaced"> · remplacé</span>':''}</div>
+        <div class="exo-tip">${ex.t}</div>
+        ${ex.hasAlt?`<span class="exo-alt" onclick="openAlt('${ex.replaced?ex.origName:ex.n}',event,'${dayKey}',${i})">Remplacer ↓</span>`:''}
+      </div>
+      <div class="exo-r">
+        <div class="exo-b"><div class="exo-sets">${ex.s}×</div><div class="exo-reps">${ex.r}</div></div>
+        ${dots}
+      </div>
+    </div>`;
+  });
+  return h+'</div>';
+}
+
+function swimCard(){
+  let h=`<div class="card"><div class="card-lbl">Plan séance · 40 min</div>`;
+  SWIM_PLAN.forEach(p=>h+=`<div class="swim-row"><div><div class="swim-name">${p.n}</div><div class="swim-sub">${p.s}</div></div><div class="swim-dur">${p.t}</div></div>`);
+  return h+'</div>';
+}
+
+function toggleDone2(key){done_days[key]=!done_days[key];save('done_days',done_days);rStrip();renderP0();renderP1()}
+
+function resolveExo(e,i,dayKey){
+  const k=dayKey+'-'+i;
+  if(replacements[k]){const r=replacements[k];return{n:r.n,t:r.t,s:r.s,r:r.r,hasAlt:e.hasAlt,replaced:true,origName:e.n}}
+  return e;
+}
+
+function tapSeries(dayKey,exoIdx,totalSeries,tapped,ev,totalExos){
+  ev.stopPropagation();
+  if(!sess_prog[dayKey])sess_prog[dayKey]={};
+  const cur_done=sess_prog[dayKey][exoIdx]||0;
+  sess_prog[dayKey][exoIdx]=(cur_done===tapped)?tapped-1:tapped;
+  save('sess_prog',sess_prog);
+  const isLastExo=exoIdx===totalExos-1,isLastSeries=tapped===totalSeries;
+  if(sess_prog[dayKey][exoIdx]===tapped&&!(isLastExo&&isLastSeries))showTimer();
+  renderP1();
+}
+
+// TIMER
+function showTimer(){
+  let tb=document.getElementById('float-timer');
+  if(!tb){tb=document.createElement('div');tb.id='float-timer';document.body.appendChild(tb)}
+  timerDur=60;timerSec=timerDur;timerRunning=true;
+  if(timerInt)clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    if(!timerRunning)return;
+    timerSec--;
+    if(timerSec<=0){clearInterval(timerInt);timerRunning=false;if(navigator.vibrate)navigator.vibrate([200,100,200]);hideTimer();return}
+    renderTimer();
+  },1000);
+  renderTimer();
+}
+function renderTimer(){
+  const tb=document.getElementById('float-timer');if(!tb)return;
+  const r=34,circ=2*Math.PI*r,dash=circ*(timerSec/timerDur);
+  tb.innerHTML=`<div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px">Repos</div>
+    <div style="position:relative;width:80px;height:80px;margin:0 auto 10px">
+      <svg width="80" height="80" style="position:absolute;top:0;left:0;transform:rotate(-90deg)">
+        <circle cx="40" cy="40" r="${r}" fill="none" stroke="#222" stroke-width="4"/>
+        <circle cx="40" cy="40" r="${r}" fill="none" stroke="#d946a8" stroke-width="4" stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700">${timerSec}</div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button onclick="adjTimer(-15)" style="background:#1a1a1a;border:none;border-radius:8px;color:#f0f0f0;font-size:13px;font-weight:600;padding:6px 12px;cursor:pointer">−15</button>
+      <button onclick="adjTimer(15)" style="background:#1a1a1a;border:none;border-radius:8px;color:#f0f0f0;font-size:13px;font-weight:600;padding:6px 12px;cursor:pointer">+15</button>
+      <button onclick="hideTimer()" style="background:#1a1a1a;border:none;border-radius:8px;color:#666;font-size:13px;font-weight:600;padding:6px 12px;cursor:pointer">✕</button>
+    </div>`;
+}
+function adjTimer(s){timerSec=Math.max(5,Math.min(180,timerSec+s));timerDur=Math.max(timerDur,timerSec);renderTimer()}
+function hideTimer(){clearInterval(timerInt);timerRunning=false;const tb=document.getElementById('float-timer');if(tb)tb.remove()}
+
+// ALT MODAL
+function openAlt(name,ev,dayKey,exoIdx){
+  ev&&ev.stopPropagation();
+  const opts=ALTS[name];if(!opts)return;
+  _altCtx={dayKey,exoIdx,origName:name};
+  document.getElementById('alt-title').textContent='Remplacer : '+name;
+  let h='';
+  opts.forEach((o,i)=>h+=`<div class="alt-opt" onclick="pickAlt(${i})"><div class="alt-opt-name">${o.n}</div><div class="alt-opt-tip">${o.tip}</div></div>`);
+  document.getElementById('alt-opts').innerHTML=h;
+  document.getElementById('alt-modal').classList.add('show');
+}
+function pickAlt(i){
+  const {dayKey,exoIdx,origName}=_altCtx;
+  const opts=ALTS[origName];if(!opts||!opts[i])return;
+  const data=gd(cur),plan=data&&data.t==='push'?PUSH:PULL;
+  const orig=plan.list[exoIdx];
+  replacements[dayKey+'-'+exoIdx]={n:opts[i].n,t:opts[i].tip,s:orig?orig.s:3,r:orig?orig.r:'12'};
+  save('replacements',replacements);
+  document.getElementById('alt-modal').classList.remove('show');
+  renderP1();
+}
+function closeAlt(ev){if(ev&&ev.target!==document.getElementById('alt-modal'))return;document.getElementById('alt-modal').classList.remove('show')}
+
+// ══════════════════════════════════════════════════════
+// PAGE 2 — NUTRITION
+// ══════════════════════════════════════════════════════
+function getBodyNeeds(todayType, yesterdayData, yDone){
+  const yt = yesterdayData ? yesterdayData.t : 'rest';
+  const hadIntenseYesterday = (yt==='push'||yt==='pull') && yDone;
+  const hadSwimYesterday = yt==='swim' && yDone;
+  const todayIsSport = todayType==='push'||todayType==='pull'||todayType==='swim';
+  const todayIsPush = todayType==='push';
+  const todayIsPull = todayType==='pull';
+  const todayIsSwim = todayType==='swim';
+  const todayIsRest = todayType==='rest';
+
+  if(hadIntenseYesterday && todayIsRest){
+    return {
+      text:'Tu as sollicité beaucoup de fibres musculaires hier. Aujourd\'hui ton corps est en phase de reconstruction — c\'est là que le muscle se forme réellement. Priorité aux protéines régulières toute la journée (toutes les 4–5h), à une bonne hydratation et à des anti-inflammatoires naturels (gingembre, épinards, oméga-3).',
+      tags:['Protéines régulières','Hydratation 2.5L','Oméga-3','Magnésium','Sommeil réparateur']
+    };
+  }
+  if(hadSwimYesterday && todayIsRest){
+    return {
+      text:'La natation d\'hier a travaillé tes épaules, ton dos et ton cardio. Le glycogène musculaire est partiellement utilisé. Ajoute des glucides complexes à chaque repas pour le reconstituer, et maintiens un bon apport protéiné pour la récupération des fibres.',
+      tags:['Glucides complexes','Protéines 140g+','Oméga-3 (saumon)','Vitamine C']
+    };
+  }
+  if(todayIsPush){
+    return {
+      text:'Séance Push ce soir — tes pectoraux, épaules et triceps vont travailler dur. Assure-toi de manger des glucides complexes au déjeuner pour avoir du glycogène disponible pendant la séance. Mange des protéines dans les 45 min après l\'effort pour déclencher la synthèse musculaire.',
+      tags:['Glucides avant séance','Protéines post-séance','Hydratation 2.5L','Magnésium']
+    };
+  }
+  if(todayIsPull){
+    return {
+      text:'Séance Pull ce soir — ton dos, tes biceps et tes rhomboïdes vont être sollicités. Le dos est un grand groupe musculaire : il a besoin d\'un apport protéiné conséquent pour récupérer. Après la séance, un repas avec 40–50g de protéines + glucides est essentiel.',
+      tags:['Protéines 40–50g post-séance','Glucides de récupération','Eau 2.5L','Zinc']
+    };
+  }
+  if(todayIsSwim){
+    return {
+      text:'Natation ce soir — effort cardio + musculaire complet. La natation brûle beaucoup d\'énergie et élimine le sodium. Après la séance, mange dans les 45 min : protéines + riz ou pâtes (glucides rapides). Resale légèrement ton repas du soir pour compenser la perte de sodium.',
+      tags:['Manger dans les 45 min','Glucides rapides','Sodium (sel)','Protéines 40g+','Eau 2.5L+']
+    };
+  }
+  if(hadIntenseYesterday && todayIsSport){
+    return {
+      text:'Tu as une séance aujourd\'hui alors que ton corps récupère encore d\'hier. Double l\'importance du déjeuner et assure un bon apport en glucides complexes avant la séance. L\'hydratation est critique : bois 250ml d\'eau toutes les 2h.',
+      tags:['Déjeuner copieux','Glucides complexes','Hydratation ++','Caféine avant séance']
+    };
+  }
+  if(todayIsRest && !hadIntenseYesterday){
+    return {
+      text:'Journée de repos et de récupération. Même sans effort physique, maintiens tes apports protéinés — le muscle se reconstruit aussi les jours de repos. Profites-en pour bien t\'hydrater et intégrer des légumes et des sources d\'oméga-3.',
+      tags:['Protéines régulières','Légumes variés','Oméga-3','Hydratation 2L']
+    };
+  }
+  // Default
+  return {
+    text:'Maintiens ton apport en protéines réparti sur les 3 repas et assure une bonne hydratation. Chaque journée bien nourrie contribue à la progression globale, même les jours sans effort visible.',
+    tags:['Protéines 3 repas','Hydratation 2L','Légumes','Sommeil 7h+']
+  };
+}
+
+function renderP2(){
+  const data=gd(cur);
+  document.getElementById('p2-sub').textContent=frd(cur);
+  const el=document.getElementById('p2-cnt');
+  const key=dk(cur);
+  const wd=cur.getDay(),bi=wd===0?6:wd-1;
+  const t=data?data.t:'rest';
+
+  // Resolve meals with possible replacements
+  const bfKey=key+'-bf', dinKey=key+'-din';
+  const bfRepl=meal_repls[bfKey], dinRepl=meal_repls[dinKey];
+  function resolveMeal(repl, fallback){ if(!repl) return fallback; if(repl.type==='custom') return {n:repl.n, d:repl.d}; if(repl.type==='preset') return BF_ALT[repl.idx]||fallback; return BF_ALT[repl]||fallback; }
+  function resolveDin(repl, fallback){ if(!repl) return fallback; if(repl.type==='custom') return {n:repl.n, d:repl.d}; if(repl.type==='preset') return DN_ALT[repl.idx]||fallback; return DN_ALT[repl]||fallback; }
+  const bf = resolveMeal(bfRepl, BF[bi%BF.length]);
+  const din = resolveDin(dinRepl, t==='swim' ? DS[wd%DS.length] : DN[wd%DN.length]);
+  const bfReplaced = !!bfRepl;
+  const dinReplaced = !!dinRepl;
+
+  // Recipe: use the date-specific one, adapted if meal was replaced
+  const recipeRaw = RECIPES_BY_DATE[key];
+  let recipe = recipeRaw || null;
+  // If a meal was replaced and the recipe matched that slot, swap to the replaced meal's recipe
+  if(recipe && recipe.slot==='bf' && bfReplaced){
+    recipe = {title: bf.n, slot:'bf', time: bf.d.split('→')[1]?.trim()||'', steps: bf.d};
+  }
+  if(recipe && recipe.slot==='dinner' && dinReplaced){
+    recipe = {title: din.n, slot:'dinner', time: din.d.split('·').slice(-1)[0]?.trim()||'', steps: din.d};
+  }
+
+  const tipIdx=(cur.getDate()+cur.getMonth()*31)%NUTRI_TIPS.length;
+  const tip=NUTRI_TIPS[tipIdx];
+  let h='';
+
+  // REPAS DU JOUR avec boutons de remplacement
+  h+=`<div class="card"><div class="card-lbl">Repas du jour</div>
+    <div class="meal-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="meal-slot">Petit-déjeuner · 7h05${bfReplaced?' <span style="color:var(--mg);font-size:9px">· remplacé</span>':''}</div>
+        <span onclick="openMealAlt('bf','${key}')" style="font-size:11px;color:var(--mg);font-weight:600;cursor:pointer">Remplacer ↓</span>
+      </div>
+      <div class="meal-name">${bf.n}</div>
+      <div class="meal-detail">${bf.d}</div>
+      ${bfReplaced?`<span onclick="resetMeal('bf','${key}')" style="font-size:11px;color:var(--tx3);cursor:pointer;margin-top:4px;display:inline-block">↩ Reprendre l'original</span>`:''}
+    </div>
+    <div class="meal-item">
+      <div class="meal-slot">Déjeuner · bureau</div>
+      <div class="meal-name">${LUNCH.n}</div>
+      <div class="meal-detail">${LUNCH.d}</div>
+    </div>
+    <div class="meal-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="meal-slot">Dîner${t==='swim'?' · dans les 45 min après natation':' · ~21h'}${dinReplaced?' <span style="color:var(--mg);font-size:9px">· remplacé</span>':''}</div>
+        <span onclick="openMealAlt('din','${key}')" style="font-size:11px;color:var(--mg);font-weight:600;cursor:pointer">Remplacer ↓</span>
+      </div>
+      <div class="meal-name">${din.n}</div>
+      <div class="meal-detail">${din.d}</div>
+      ${dinReplaced?`<span onclick="resetMeal('din','${key}')" style="font-size:11px;color:var(--tx3);cursor:pointer;margin-top:4px;display:inline-block">↩ Reprendre l'original</span>`:''}
+    </div>
+  </div>`;
+
+  // ESTIMATION PROTEINES
+  let prot_bf;
+  if(bfRepl && bfRepl.type==='custom'){
+    let tp=0; bfRepl.checked.forEach(k=>{const[cat,i]=k.split(':');tp+=INGR[cat].items[i].p}); prot_bf=Math.round(tp);
+  } else { prot_bf = bfReplaced ? 26 : [35,26,28,30,22,30,32][bi%7]; }
+  const prot_lunch=45;
+  let prot_din;
+  if(dinRepl && dinRepl.type==='custom'){
+    let tp=0; dinRepl.checked.forEach(k=>{const[cat,i]=k.split(':');tp+=INGR[cat].items[i].p}); prot_din=Math.round(tp);
+  } else { prot_din = dinReplaced ? 28 : (t==='swim'?47:40); }
+  const total_prot=prot_bf+prot_lunch+prot_din;
+  const target=150;
+  h+=`<div class="card"><div class="card-lbl">Protéines estimées</div>
+    <div class="proto-bar"><div class="proto-lbl"><span>Petit-déjeuner</span><span>~${prot_bf}g</span></div><div class="proto-track"><div class="proto-fill" style="width:${prot_bf/target*100}%"></div></div></div>
+    <div class="proto-bar"><div class="proto-lbl"><span>Déjeuner</span><span>~${prot_lunch}g</span></div><div class="proto-track"><div class="proto-fill" style="width:${prot_lunch/target*100}%"></div></div></div>
+    <div class="proto-bar" style="margin-bottom:0"><div class="proto-lbl"><span>Dîner</span><span>~${prot_din}g</span></div><div class="proto-track"><div class="proto-fill" style="width:${prot_din/target*100}%"></div></div></div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;color:var(--tx2)">Total estimé</span>
+      <span style="font-size:18px;font-weight:700;color:${total_prot>=130?'var(--mg)':'var(--tx3)'}">${total_prot}g <span style="font-size:12px;color:var(--tx3);font-weight:400">/ ${target}g objectif</span></span>
+    </div>
+  </div>`;
+
+  // BODY NEEDS based on today/yesterday
+  const yesterday=new Date(cur); yesterday.setDate(cur.getDate()-1);
+  const yesterdayData=gd(yesterday);
+  const yDone=done_days[dk(yesterday)];
+  const bodyNeeds=getBodyNeeds(t, yesterdayData, yDone);
+  h+=`<div class="nutri-tip">
+    <div class="nutri-tip-lbl">Conseil du jour</div>
+    <div class="nutri-tip-title">${tip.title}</div>
+    <div class="nutri-tip-body">${tip.body}</div>
+    <div class="nutri-tip-why"><strong style="color:var(--tx2)">Pourquoi ça compte :</strong> ${tip.why}</div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(217,70,168,.15)">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:6px">Ce dont ton corps a besoin aujourd\'hui</div>
+      <div style="font-size:13px;color:var(--tx2);line-height:1.6">${bodyNeeds.text}</div>
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">${bodyNeeds.tags.map(t=>`<span style="background:var(--s3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--tx2)">${t}</span>`).join('')}</div>
+    </div>
+  </div>`;
+
+  // RECETTE DU JOUR
+  if(recipe){
+    const slotLabel = recipe.slot==='bf' ? 'Recette · Petit-déjeuner' : recipe.slot==='lunch' ? 'Recette · Déjeuner' : 'Recette · Dîner du soir';
+    h+=`<div class="card"><div class="card-lbl-mg">${slotLabel}</div>
+      <div class="recipe-card">
+        <div class="recipe-title">${recipe.title}</div>
+        ${recipe.time?`<div class="recipe-time">${recipe.time}</div>`:''}
+        <div class="recipe-steps">${recipe.steps.split('\\n').join('<br>')}</div>
+      </div>
+    </div>`;
+  }
+
+  // À ÉVITER
+  h+=`<div class="card"><div class="card-lbl">À éviter — et pourquoi</div>`;
+  AVOID.forEach(a=>h+=`<div class="avoid-item"><div class="avoid-x">✕</div><div class="avoid-body"><div class="avoid-name">${a.n}</div><div class="avoid-why">${a.w}</div></div></div>`);
+  h+='</div>';
+
+  el.innerHTML=h;
+
+  // Meal alt modal (inject dynamically)
+  if(!document.getElementById('meal-modal')){
+    const mm=document.createElement('div');
+    mm.id='meal-modal';
+    mm.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:none;align-items:flex-end';
+    mm.innerHTML=`<div style="background:var(--s1);border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));width:100%;border:1px solid var(--bd)">
+      <div id="mm-title" style="font-size:16px;font-weight:700;margin-bottom:3px"></div>
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:14px">Choisir une alternative</div>
+      <div id="mm-opts"></div>
+      <button onclick="document.getElementById('meal-modal').style.display='none'" style="width:100%;padding:13px;border-radius:13px;border:none;background:var(--s3);color:var(--tx2);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px">Annuler</button>
+    </div>`;
+    document.body.appendChild(mm);
+  }
+}
+
+let _mealCtx={};
+let _cfgChecked=new Set();
+
+function openMealAlt(slot, dayKey){
+  _mealCtx={slot,dayKey};
+  const isB=slot==='bf';
+  const list=isB?BF_ALT:DN_ALT;
+  document.getElementById('mm-title').textContent=isB?'Alternatives petit-déjeuner':'Alternatives dîner';
+  let h='';
+  list.forEach((o,i)=>h+=`<div onclick="pickMealAlt(${i})" style="background:var(--s2);border-radius:13px;padding:13px;margin-bottom:8px;cursor:pointer;border:1px solid var(--bd)"><div style="font-size:14px;font-weight:600;margin-bottom:3px">${o.n}</div><div style="font-size:12px;color:var(--tx3)">${o.d.split('→')[0]}</div></div>`);
+  // Add configurator button
+  h+=`<div onclick="openConfigurator()" style="background:var(--mg2);border:1px solid var(--mg3);border-radius:13px;padding:13px;margin-bottom:8px;cursor:pointer">
+    <div style="font-size:14px;font-weight:700;color:var(--mg);margin-bottom:3px">Composer mon repas ✦</div>
+    <div style="font-size:12px;color:var(--tx3)">Choisis tes ingrédients et vois les valeurs nutritives en temps réel</div>
+  </div>`;
+  document.getElementById('mm-opts').innerHTML=h;
+  document.getElementById('meal-modal').style.display='flex';
+}
+
+function pickMealAlt(i){
+  meal_repls[_mealCtx.dayKey+'-'+_mealCtx.slot]={type:'preset',idx:i};
+  save('meal_repls',meal_repls);
+  document.getElementById('meal-modal').style.display='none';
+  renderP2();
+}
+
+function resetMeal(slot,dayKey){
+  delete meal_repls[dayKey+'-'+slot];
+  save('meal_repls',meal_repls);
+  renderP2();
+}
+
+// ── CONFIGURATEUR ──────────────────────────────────────
+function openConfigurator(){
+  document.getElementById('meal-modal').style.display='none';
+  _cfgChecked = new Set();
+  // Restore saved custom meal if exists
+  const existing = meal_repls[_mealCtx.dayKey+'-'+_mealCtx.slot];
+  if(existing && existing.type==='custom' && existing.checked){
+    existing.checked.forEach(k=>_cfgChecked.add(k));
+  }
+  renderConfigurator();
+  document.getElementById('cfg-modal').classList.add('show');
+}
+
+function renderConfigurator(){
+  const slot=_mealCtx.slot;
+  const lim=INGR_LIMITS[slot];
+  // Compute totals
+  let totCal=0,totP=0,totG=0,totF=0;
+  _cfgChecked.forEach(key=>{
+    const [cat,i]=key.split(':');
+    const item=INGR[cat].items[i];
+    totCal+=item.cal; totP+=item.p; totG+=item.g; totF+=item.f;
+  });
+  const calPct=Math.min(100,totCal/lim.cal*100);
+  const pPct=Math.min(100,totP/lim.p*100);
+  const calOver=totCal>lim.cal, pOk=totP>=lim.p*0.7;
+
+  // Header info
+  document.getElementById('cfg-title').textContent='Composer · '+lim.label;
+  document.getElementById('cfg-sub').textContent=lim.note;
+
+  // Macros display
+  document.getElementById('cfg-macros').innerHTML=`
+    <div class="cfg-macro"><div class="cfg-macro-val ${calOver?'over':totCal>0?'ok':''}">${Math.round(totCal)}</div><div class="cfg-macro-lbl">kcal / ${lim.cal}</div><div class="cfg-limit-bar"><div class="cfg-limit-fill ${calOver?'over':''}" style="width:${calPct}%"></div></div></div>
+    <div class="cfg-macro"><div class="cfg-macro-val ${pOk?'ok':''}">${Math.round(totP)}g</div><div class="cfg-macro-lbl">protéines / ${lim.p}g</div><div class="cfg-limit-bar"><div class="cfg-limit-fill" style="width:${pPct}%"></div></div></div>
+    <div class="cfg-macro"><div class="cfg-macro-val">${Math.round(totG)}g</div><div class="cfg-macro-lbl">glucides</div></div>
+    <div class="cfg-macro"><div class="cfg-macro-val">${Math.round(totF)}g</div><div class="cfg-macro-lbl">lipides</div></div>`;
+
+  // Ingredients list
+  let h='';
+  Object.entries(INGR).forEach(([cat,group])=>{
+    h+=`<div class="ingr-cat"><div class="ingr-cat-lbl">${group.label}</div>`;
+    group.items.forEach((item,i)=>{
+      const key=cat+':'+i;
+      const on=_cfgChecked.has(key);
+      h+=`<div class="ingr-item">
+        <div class="ingr-left">
+          <div class="ingr-name">${item.n}</div>
+          <div class="ingr-info">${item.unit} · ${item.cal} kcal · ${item.p}g prot · ${item.g}g glu · ${item.f}g lip</div>
+        </div>
+        <div class="ingr-check ${on?'on':''}" onclick="toggleIngr('${key}')"></div>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('cfg-ingr-list').innerHTML=h;
+
+  // Apply button state
+  const btn=document.getElementById('cfg-apply-btn');
+  btn.disabled = _cfgChecked.size===0;
+  btn.textContent = _cfgChecked.size>0 ? `Utiliser ce repas (${_cfgChecked.size} ingr., ${Math.round(totP)}g prot.)` : 'Sélectionne des ingrédients';
+}
+
+function toggleIngr(key){
+  if(_cfgChecked.has(key)) _cfgChecked.delete(key);
+  else _cfgChecked.add(key);
+  renderConfigurator();
+}
+
+function applyCustomMeal(){
+  if(_cfgChecked.size===0) return;
+  // Build name and detail from checked ingredients
+  const names=[], details=[];
+  let totCal=0,totP=0,totG=0,totF=0;
+  _cfgChecked.forEach(key=>{
+    const [cat,i]=key.split(':');
+    const item=INGR[cat].items[i];
+    names.push(item.n);
+    details.push(`${item.n} (${item.unit})`);
+    totCal+=item.cal; totP+=item.p; totG+=item.g; totF+=item.f;
+  });
+  const customMeal={
+    type:'custom',
+    checked:[..._cfgChecked],
+    n: names.slice(0,3).join(', ')+(names.length>3?' +'+( names.length-3):''),
+    d: details.join(' · ')+` → ${Math.round(totP)}g protéines · ${Math.round(totCal)} kcal`
+  };
+  meal_repls[_mealCtx.dayKey+'-'+_mealCtx.slot]=customMeal;
+  save('meal_repls',meal_repls);
+  document.getElementById('cfg-modal').classList.remove('show');
+  renderP2();
+}
+
+function closeCfg(){
+  document.getElementById('cfg-modal').classList.remove('show');
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+rStrip();renderP0();renderP1();renderP2();
+</script>
+
+<!-- CONFIGURATEUR MODAL -->
+<div class="cfg-modal" id="cfg-modal">
+  <div class="cfg-header" style="position:relative">
+    <div class="cfg-title" id="cfg-title">Composer mon repas</div>
+    <div class="cfg-sub" id="cfg-sub"></div>
+    <button class="cfg-close" onclick="closeCfg()">✕</button>
+  </div>
+  <div class="cfg-body">
+    <div class="cfg-macros" id="cfg-macros" style="margin-bottom:14px"></div>
+    <div id="cfg-ingr-list"></div>
+  </div>
+  <div class="cfg-footer">
+    <button class="cfg-apply" id="cfg-apply-btn" onclick="applyCustomMeal()" disabled>Sélectionne des ingrédients</button>
+    <button class="cfg-reset" onclick="_cfgChecked.clear();renderConfigurator()">Tout décocher</button>
+  </div>
+</div>
+</body>
+</html>
