@@ -125,6 +125,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;backg
 .cd.empty{background:none}
 .cd.rest-d{background:var(--s2);color:var(--tx3)}
 .cd.done-d{background:var(--mg);color:#080808}
+.cd.nutri-d{background:rgba(217,70,168,.18);color:var(--mg);border:1px solid rgba(217,70,168,.3)}
 .cd.missed{background:rgba(255,255,255,.05);color:#444}
 .cd.away-d{background:var(--s2);color:#444}
 .cd.future{background:var(--s2);color:#333}
@@ -705,6 +706,7 @@ const YT='https://music.youtube.com/playlist?list=RDCLAK5uy_kmPRjHDECIcuVwnKsx2N
 // STORAGE
 // ══════════════════════════════════════════════════════
 let done_days      = load('done_days',{});
+let nutri_days     = load('nutri_days',{});
 let weights        = load('weights',[]);
 let sess_prog      = load('sess_prog',{});
 let replacements   = load('replacements',{});
@@ -742,9 +744,10 @@ function rStrip(){
     const data=gd(d),t=data?data.t:'rest';
     const on=dk(d)===dk(cur),tod=dk(d)===dk(TR)&&!on;
     const isDone=done_days[dk(d)];
+    const isNDone=nutri_days[dk(d)];
     const b=document.createElement('div');
     b.className='sd'+(on?' on':'')+(tod?' tod':'');
-    b.innerHTML=`<span class="sd-n">${FRD[d.getDay()]}</span><span class="sd-d">${d.getDate()}</span><span class="pip ${t}"></span>${isDone?'<span class="done-dot"></span>':''}`;
+    b.innerHTML=`<span class="sd-n">${FRD[d.getDay()]}</span><span class="sd-d">${d.getDate()}</span><span class="pip ${t}"></span>${(isDone||isNDone)?'<span class="done-dot"></span>':''}`;
     b.onclick=()=>{cur=new Date(d);renderP0();renderP1();renderP2();rStrip()};
     el.appendChild(b);
   }
@@ -790,13 +793,15 @@ function renderP0(){
   h+=`<div class="motiv-box"><div class="motiv-quote">"${m.q}"</div>${m.a?`<div class="motiv-attr">— ${m.a}</div>`:''}</div>`;
 
   // DAY SUMMARY HERO
+  const isNutriDone=nutri_days[key];
   h+=`<div class="day-hero ${isSport?'sport':''}">
     <div class="dh-tag ${isSport?'':'grey'}"><span class="dh-dot"></span>${TLBL[t]}</div>
     <div class="dh-title">${data.l}</div>
     <div class="dh-desc">${data.x}</div>
-    ${(t==='push'||t==='pull')?`<div class="dh-actions">
-      <button class="btn-start" onclick="goPage(1,document.querySelectorAll('.nb')[1])">Démarrer la séance →</button>
-    </div>`:''}
+    <div class="dh-actions">
+      ${(t==='push'||t==='pull')?`<button class="btn-start" onclick="goPage(1,document.querySelectorAll('.nb')[1])">Démarrer la séance →</button>`:''}
+      ${(t==='rest'||t==='away'||t==='swim')?`<button class="btn-done ${isNutriDone?'is-done':''}" onclick="toggleNutri('${key}')">${isNutriDone?'✓ Nutrition suivie':'Nutrition suivie'}</button>`:''}
+    </div>
   </div>`;
 
   // STATS GRID
@@ -831,7 +836,7 @@ function renderP0(){
   h+='</div>';
 
   // CALENDAR
-  h+=`<div class="card"><div class="card-lbl">Calendrier</div>${drawCal()}<div class="cal-legend"><span><span class="leg-dot" style="background:var(--mg)"></span>Fait</span><span><span class="leg-dot" style="background:#222"></span>Raté</span><span><span class="leg-dot" style="background:#1a1a1a"></span>Repos</span></div></div>`;
+  h+=`<div class="card"><div class="card-lbl">Calendrier</div>${drawCal()}<div class="cal-legend"><span><span class="leg-dot" style="background:var(--mg)"></span>Séance faite</span><span><span class="leg-dot" style="background:rgba(217,70,168,.2);border:1px solid rgba(217,70,168,.3);display:inline-block"></span>Nutrition suivie</span><span><span class="leg-dot" style="background:#333"></span>Raté / repos</span></div></div>`;
 
   el.innerHTML=h;
 }
@@ -846,9 +851,12 @@ function calcStreak(){
     const key=dk(d);
     const prog=gd(d);
     const isSport=prog&&(prog.t==='push'||prog.t==='pull'||prog.t==='swim');
-    const isRest=!prog||prog.t==='rest'||prog.t==='away';
+    const isRest=prog&&(prog.t==='rest'||prog.t==='away');
+    const isOut=!prog;
     if(isSport&&done_days[key])s++;
+    else if((isRest||isOut)&&nutri_days[key])s++;
     else if(isSport&&!done_days[key]&&d<TR)break;
+    else if((isRest||isOut)&&!nutri_days[key]&&d<TR)break;
     d.setDate(d.getDate()-1);
     if(d<ST)break;
   }
@@ -899,16 +907,20 @@ function drawCal(){
       const date=new Date(y,m,d),key=dk(date);
       const prog=gd(date),isToday=key===dk(TR),isFuture=date>TR;
       const isDone=done_days[key];
+      const isNutri=nutri_days[key];
       const isSport=prog&&(prog.t==='push'||prog.t==='pull'||prog.t==='swim');
-      const isAway=prog&&prog.t==='away';
+      const isRest2=!prog||prog.t==='rest'||prog.t==='away';
       let cls='cd';
       if(isToday)cls+=' tod';
-      if(isAway)cls+=' away-d';
-      else if(!prog||prog.t==='rest')cls+=' rest-d';
-      else if(isFuture)cls+=' future';
-      else if(isDone)cls+=' done-d';
-      else if(isSport)cls+=' missed';
-      else cls+=' rest-d';
+      if(isSport){
+        if(isFuture)cls+=' future';
+        else if(isDone)cls+=' done-d';
+        else cls+=' missed';
+      } else if(isRest2){
+        if(isFuture)cls+=' future';
+        else if(isNutri)cls+=' nutri-d';
+        else cls+=' rest-d';
+      }
       h+=`<div class="${cls}">${d}</div>`;
     }
     h+='</div>';
@@ -932,7 +944,7 @@ function renderP1(){
     <div class="hero-title">${data.l}</div>
     <div class="hero-desc">${data.x}</div>
     <div class="hero-actions">
-      ${t==='push'||t==='pull'?`<button class="btn-done ${isDone?'is-done':''}" onclick="toggleDone2('${key}')">${isDone?'✓ Fait':'Marquer comme fait'}</button>`:''}
+      ${t==='push'||t==='pull'||t==='swim'?`<button class="btn-done ${isDone?'is-done':''}" onclick="toggleDone2('${key}')">${isDone?'✓ Fait':'Marquer comme fait'}</button>`:''}
       ${t==='push'||t==='pull'||t==='swim'?`<a class="btn-yt" href="${YT}" target="_blank">▶ Playlist</a>`:''}
     </div>
   </div>`;
@@ -978,6 +990,12 @@ function swimCard(){
 }
 
 function toggleDone2(key){done_days[key]=!done_days[key];save('done_days',done_days);rStrip();renderP0();renderP1()}
+
+function toggleNutri(key){
+  nutri_days[key]=!nutri_days[key];
+  save('nutri_days',nutri_days);
+  rStrip();renderP0();renderP2();
+}
 
 function resolveExo(e,i,dayKey){
   const k=dayKey+'-'+i;
