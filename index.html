@@ -475,22 +475,45 @@ const BF=[
   {n:'Œuf poché + jambon',d:'2 œufs pochés (3 min eau frémissante) · 2 tranches jambon blanc · pain complet · moutarde → ~32g protéines · 8 min'}
 ];
 
-const LUNCH={n:'Déjeuner — tes salades habituelles',d:'Riz + patate douce + poulet → meilleur choix, demande grosse portion (~45g prot). César → double poulet. Pâtes pesto → ajoute thon ou mozzarella.'};
-
-const DN=[
-  {n:'Saumon + riz + courgettes',d:'200g saumon au four 15 min (200°C) · riz cuit · courgette sautée huile d\'olive · ~45g protéines · 20 min'},
-  {n:'Omelette végétale + pain',d:'4 œufs · poivron + champignons + épinards · 2 tranches pain complet · ~30g protéines · 10 min'},
-  {n:'Poulet sauté + pâtes',d:'180g blanc de poulet en lamelles · pâtes complètes · sauce tomate + basilic · ~50g protéines · 20 min'},
-  {n:'Bol thon + riz + avocat',d:'Thon boîte (140g) · riz cuit · ½ avocat · sauce soja + sésame · style poké · ~38g protéines · 10 min'},
-  {n:'Cabillaud + lentilles',d:'150g cabillaud vapeur · 200g lentilles vertes boîte · épinards sautés à l\'ail · ~48g protéines · 15 min'},
-  {n:'Dinde + patate douce',d:'Escalope dinde (150g) · patate douce rôtie 25 min · brocoli vapeur · sauce yaourt cumin · ~50g protéines'},
-  {n:'Crevettes + nouilles de riz',d:'150g crevettes surgelées · nouilles de riz · poivron + courgette · sauce soja + sésame · ~35g protéines · 15 min'}
+const COLLATIONS=[
+  '1 banane (120g) + 20g d\'amandes (15 amandes) · ~200 kcal · 5g prot · à garder dans le sac',
+  '30g de noix de cajou + 1 pomme (~150g) · ~240 kcal · 5g prot · aucun frigo nécessaire',
+  '2 carrés de chocolat noir 70% (20g) + 20g amandes · ~180 kcal · 4g prot · anti-fatigue après-midi',
+  '1 barre de céréales type muesli sans sucre ajouté (40g) + 1 mandarine · ~200 kcal · 4g prot',
+  '30g de noix mélangées (amandes, noix, noisettes) + 1 clémentine · ~220 kcal · 5g prot',
+  '20g de pistaches (environ 40 pistaches) + 1 poire (~150g) · ~190 kcal · 5g prot',
+  '1 banane (120g) + 15g de beurre de cacahuète (1 cs rase) · ~220 kcal · 6g prot'
 ];
 
+const LUNCH={n:'Déjeuner — tes salades habituelles',d:'Riz + patate douce + poulet → demande 200g de poulet + 200g riz + 150g patate douce (~50g prot). César → demande double poulet (200g total), limite les croûtons. Pâtes pesto → ajoute 1 boîte thon (140g) ou 2 œufs durs si possible.'};
+
+// Dîners jours SPORT (Push/Pull/Natation) — portions généreuses
+const DN=[
+  {n:'Saumon + riz + courgettes',d:'200g filet de saumon au four 15 min à 200°C · 250g riz cuit (80g sec) · 150g courgette sautée · 1 cs huile d\'olive (15ml) · jus ½ citron · sel + poivre → ~48g protéines · ~680 kcal · 20 min'},
+  {n:'Omelette végétale + pain',d:'4 œufs entiers · 80g poivron rouge · 100g champignons · 50g épinards frais · 2 tranches pain complet (60g) · 1 cc huile d\'olive (5ml) → ~34g protéines · ~520 kcal · 10 min'},
+  {n:'Poulet sauté + pâtes',d:'200g blanc de poulet en lamelles · 250g pâtes complètes cuites (80g sèches) · 150g sauce tomate · 1 cs huile d\'olive (15ml) · basilic + ail → ~55g protéines · ~720 kcal · 20 min'},
+  {n:'Bol thon + riz + avocat',d:'140g thon boîte égoutté · 250g riz cuit (80g sec) · ½ avocat (80g) · 1 cs sauce soja (15ml) · 1 cc huile de sésame (5ml) · graines de sésame → ~42g protéines · ~650 kcal · 10 min'},
+  {n:'Cabillaud + lentilles',d:'200g cabillaud vapeur ou four · 200g lentilles vertes boîte égouttées · 80g épinards sautés à l\'ail · 1 cs huile d\'olive (15ml) · cumin + sel → ~52g protéines · ~620 kcal · 15 min'},
+  {n:'Dinde + patate douce',d:'200g escalope de dinde poêlée · 200g patate douce rôtie à 220°C (25 min) · 150g brocoli vapeur · 1 yaourt nature (125g) + ½ cc cumin · sel → ~54g protéines · ~650 kcal · 30 min'},
+  {n:'Crevettes + nouilles de riz',d:'180g crevettes décortiquées surgelées · 200g nouilles de riz cuites · 100g poivron + 100g courgette · 1 cs huile de sésame (15ml) · 2 cs sauce soja (30ml) → ~38g protéines · ~600 kcal · 15 min'}
+];
+
+// Dîners REPOS — portions réduites en glucides, légumes augmentés
+const DN_REST=[
+  {n:'Saumon + légumes + riz léger',d:'150g filet de saumon poêlé · 150g riz cuit (50g sec) · 200g courgette + épinards sautés · 1 cs huile d\'olive (15ml) · jus ½ citron → ~38g protéines · ~480 kcal · 15 min'},
+  {n:'Omelette légumes + pain',d:'3 œufs entiers · 100g champignons · 80g poivron · 50g épinards · 1 tranche pain complet (30g) → ~26g protéines · ~380 kcal · 10 min'},
+  {n:'Poulet + haricots verts',d:'150g blanc de poulet poêlé · 250g haricots verts vapeur · 1 cs huile d\'olive (15ml) + ail en poudre + fleur de sel · 150g riz cuit (50g sec) → ~40g protéines · ~480 kcal · 20 min'},
+  {n:'Bol thon + salade',d:'140g thon boîte égoutté · grande salade verte (100g) · 80g tomates cerises · ½ avocat (80g) · 1 cs huile d\'olive (15ml) + vinaigre · 1 tranche pain complet → ~36g protéines · ~450 kcal · 5 min'},
+  {n:'Cabillaud vapeur + légumes',d:'150g cabillaud vapeur · 200g brocoli + 150g carottes vapeur · 1 cs huile d\'olive (15ml) · jus citron + cumin → ~32g protéines · ~360 kcal · 15 min'},
+  {n:'Dinde + salade composée',d:'150g escalope de dinde poêlée · 100g salade verte · 80g tomates cerises · 50g concombre · 1 cs huile d\'olive (15ml) + vinaigre balsamique + moutarde → ~36g protéines · ~380 kcal · 15 min'},
+  {n:'Crevettes sautées + légumes',d:'150g crevettes surgelées · 200g courgette + 100g poivron sautés · 1 cs huile de sésame (15ml) · 2 cs sauce soja (30ml) · 150g riz cuit (50g sec) → ~32g protéines · ~450 kcal · 15 min'}
+];
+
+// Dîners POST-NATATION — dans les 45 min, glucides prioritaires
 const DS=[
-  {n:'Saumon + riz (portion généreuse)',d:'Dans les 45 min après natation. 200g saumon + 200g riz + légumes. ~45g protéines.'},
-  {n:'Poulet + riz complet',d:'200g blanc de poulet · riz complet · brocoli · sauce soja. Portion riz plus grande. ~50g protéines.'},
-  {n:'Pâtes + thon + tomates cerises',d:'150g pâtes complètes · 1 boîte thon · tomates cerises · câpres + huile d\'olive. ~40g protéines · 15 min.'}
+  {n:'Saumon + riz + légumes (post-nage)',d:'200g filet saumon poêlé · 250g riz cuit (80g sec) · 150g épinards sautés · 1 cs huile d\'olive (15ml) · dans les 45 min après la séance → ~48g protéines · ~680 kcal'},
+  {n:'Poulet + riz complet (post-nage)',d:'200g blanc de poulet poêlé · 250g riz complet cuit (80g sec) · 150g brocoli vapeur · 1 cs sauce soja (15ml) → ~52g protéines · ~700 kcal'},
+  {n:'Pâtes + thon + tomates (post-nage)',d:'250g pâtes complètes cuites (80g sèches) · 140g thon boîte égoutté · 100g tomates cerises · 1 cs huile d\'olive (15ml) · 1 cc câpres → ~42g protéines · ~660 kcal · 15 min'}
 ];
 
 // Conseils nutritionnels (30 jours de rotation)
@@ -1204,8 +1227,10 @@ function renderP2(){
   const bfRepl=meal_repls[bfKey], dinRepl=meal_repls[dinKey];
   function resolveMeal(repl, fallback){ if(!repl) return fallback; if(repl.type==='custom') return {n:repl.n, d:repl.d}; if(repl.type==='preset') return BF_ALT[repl.idx]||fallback; return BF_ALT[repl]||fallback; }
   function resolveDin(repl, fallback){ if(!repl) return fallback; if(repl.type==='custom') return {n:repl.n, d:repl.d}; if(repl.type==='preset') return DN_ALT[repl.idx]||fallback; return DN_ALT[repl]||fallback; }
+  const isSportNutri = t==='push'||t==='pull'||t==='swim';
   const bf = resolveMeal(bfRepl, BF[bi%BF.length]);
-  const din = resolveDin(dinRepl, t==='swim' ? DS[wd%DS.length] : DN[wd%DN.length]);
+  const dinFallback = t==='swim' ? DS[wd%DS.length] : (isSportNutri ? DN[wd%DN.length] : DN_REST[wd%DN_REST.length]);
+  const din = resolveDin(dinRepl, dinFallback);
   const bfReplaced = !!bfRepl;
   const dinReplaced = !!dinRepl;
 
@@ -1240,6 +1265,11 @@ function renderP2(){
       <div class="meal-name">${LUNCH.n}</div>
       <div class="meal-detail">${LUNCH.d}</div>
     </div>
+    ${isSportNutri ? `<div class="meal-item">
+      <div class="meal-slot">Collation · 16h–17h (optionnel mais recommandé)</div>
+      <div class="meal-name">${COLLATIONS[wd%COLLATIONS.length].split(' · ')[0]}</div>
+      <div class="meal-detail">${COLLATIONS[wd%COLLATIONS.length]}</div>
+    </div>` : ''}
     <div class="meal-item">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div class="meal-slot">Dîner${t==='swim'?' · dans les 45 min après natation':' · ~21h'}${dinReplaced?' <span style="color:var(--mg);font-size:9px">· remplacé</span>':''}</div>
@@ -1252,24 +1282,44 @@ function renderP2(){
   </div>`;
 
   // ESTIMATION PROTEINES
+  const CAL_TARGET = isSportNutri ? 2700 : 2400;
+  const PROT_TARGET = isSportNutri ? 155 : 135;
+  const CARB_TARGET = isSportNutri ? 320 : 210;
+  const BF_PROT_BASE = [38,30,32,34,26,36,34];
   let prot_bf;
   if(bfRepl && bfRepl.type==='custom'){
     let tp=0; bfRepl.checked.forEach(k=>{const[cat,i]=k.split(':');tp+=INGR[cat].items[i].p}); prot_bf=Math.round(tp);
-  } else { prot_bf = bfReplaced ? 26 : [35,26,28,30,22,30,32][bi%7]; }
-  const prot_lunch=45;
+  } else { prot_bf = bfReplaced ? 28 : BF_PROT_BASE[bi%7]; }
+  const prot_lunch = 48;
+  const prot_collation = isSportNutri ? 5 : 0;
   let prot_din;
   if(dinRepl && dinRepl.type==='custom'){
     let tp=0; dinRepl.checked.forEach(k=>{const[cat,i]=k.split(':');tp+=INGR[cat].items[i].p}); prot_din=Math.round(tp);
-  } else { prot_din = dinReplaced ? 28 : (t==='swim'?47:40); }
-  const total_prot=prot_bf+prot_lunch+prot_din;
-  const target=150;
-  h+=`<div class="card"><div class="card-lbl">Protéines estimées</div>
-    <div class="proto-bar"><div class="proto-lbl"><span>Petit-déjeuner</span><span>~${prot_bf}g</span></div><div class="proto-track"><div class="proto-fill" style="width:${prot_bf/target*100}%"></div></div></div>
-    <div class="proto-bar"><div class="proto-lbl"><span>Déjeuner</span><span>~${prot_lunch}g</span></div><div class="proto-track"><div class="proto-fill" style="width:${prot_lunch/target*100}%"></div></div></div>
-    <div class="proto-bar" style="margin-bottom:0"><div class="proto-lbl"><span>Dîner</span><span>~${prot_din}g</span></div><div class="proto-track"><div class="proto-fill" style="width:${prot_din/target*100}%"></div></div></div>
+  } else { prot_din = dinReplaced ? 30 : (t==='swim' ? 48 : isSportNutri ? 52 : 38); }
+  const total_prot = prot_bf + prot_lunch + prot_din + prot_collation;
+  const target = PROT_TARGET;
+  h+=`<div class="card"><div class="card-lbl">Objectifs du jour · ${isSportNutri?'Jour de sport':'Jour de repos'}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:var(--s2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:18px;font-weight:700;color:var(--mg)">${CAL_TARGET}</div>
+        <div style="font-size:10px;color:var(--tx3);margin-top:2px">kcal</div>
+      </div>
+      <div style="background:var(--s2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:18px;font-weight:700;color:var(--tx)">${PROT_TARGET}g</div>
+        <div style="font-size:10px;color:var(--tx3);margin-top:2px">protéines</div>
+      </div>
+      <div style="background:var(--s2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:18px;font-weight:700;color:var(--tx)">${CARB_TARGET}g</div>
+        <div style="font-size:10px;color:var(--tx3);margin-top:2px">glucides</div>
+      </div>
+    </div>
+    <div class="proto-bar"><div class="proto-lbl"><span>Petit-déjeuner</span><span>~${prot_bf}g prot</span></div><div class="proto-track"><div class="proto-fill" style="width:${Math.min(100,prot_bf/target*100)}%"></div></div></div>
+    <div class="proto-bar"><div class="proto-lbl"><span>Déjeuner</span><span>~${prot_lunch}g prot</span></div><div class="proto-track"><div class="proto-fill" style="width:${Math.min(100,prot_lunch/target*100)}%"></div></div></div>
+    ${isSportNutri?`<div class="proto-bar"><div class="proto-lbl"><span>Collation 16h</span><span>~${prot_collation}g prot</span></div><div class="proto-track"><div class="proto-fill" style="width:${Math.min(100,prot_collation/target*100)}%"></div></div></div>`:''}
+    <div class="proto-bar" style="margin-bottom:0"><div class="proto-lbl"><span>Dîner</span><span>~${prot_din}g prot</span></div><div class="proto-track"><div class="proto-fill" style="width:${Math.min(100,prot_din/target*100)}%"></div></div></div>
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:13px;color:var(--tx2)">Total estimé</span>
-      <span style="font-size:18px;font-weight:700;color:${total_prot>=130?'var(--mg)':'var(--tx3)'}">${total_prot}g <span style="font-size:12px;color:var(--tx3);font-weight:400">/ ${target}g objectif</span></span>
+      <span style="font-size:13px;color:var(--tx2)">Total protéines estimé</span>
+      <span style="font-size:18px;font-weight:700;color:${total_prot>=target*0.9?'var(--mg)':'var(--tx3)'}">${total_prot}g <span style="font-size:12px;color:var(--tx3);font-weight:400">/ ${target}g</span></span>
     </div>
   </div>`;
 
