@@ -198,6 +198,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;backg
 .modal-cancel{width:100%;padding:13px;border-radius:13px;border:none;
   background:var(--s3);color:var(--tx2);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px}
 
+/* ── VIDEO BTN ── */
+.btn-video{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--mg);background:var(--mg2);border:none;border-radius:8px;padding:4px 10px;cursor:pointer;margin-top:6px;font-weight:600;text-decoration:none}
+.btn-video:active{opacity:.7}
+.exo-muscles{font-size:10px;color:var(--mg);font-weight:600;letter-spacing:.04em;margin-top:3px;text-transform:uppercase}
+
 /* ── CONFIGURATEUR REPAS ── */
 .cfg-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:none;flex-direction:column;overflow:hidden}
 .cfg-modal.show{display:flex}
@@ -370,7 +375,7 @@ const ALTS={
     {n:'Pompes pieds surélevés',tip:'Pieds sur le canapé, corps incliné. Plus le corps est vertical, plus les épaules travaillent.'},
     {n:'Handstand mur (débutant)',tip:'Appui contre le mur, maintiens 20 sec. Progression vers le développé épaules.'}
   ],
-  'Tirages serviette + porte':[
+  'Rowing unilatéral (chaise + sac)':[
     {n:'Pompes prise serrée',tip:'Mains très rapprochées (5 cm). Simule le mouvement de tirage en négatif.'},
     {n:'Pull-over sac lesté allongé',tip:'Allongé sur le dos, sac à bout de bras, descends-le derrière la tête. Grand dorsal.'},
     {n:'Isométrie dos contre mur',tip:'Dos au mur, coudes fléchis à 90°, pousse les coudes contre le mur 30 sec.'}
@@ -380,25 +385,74 @@ const ALTS={
     {n:'Montées de marches lestées',tip:'Monte et descends une marche ou tabouret avec sac lesté.'},
     {n:'Fentes statiques',tip:'Fente avant, maintiens 3 sec en bas. Même effet d\'entretien.'}
   ]
-};
+,
+   url:'https://www.physioatlas.com/exercice/epaule-force-triceps-dips/'};
 
 const PUSH={lbl:'Séance A — Pectoraux · Épaules · Triceps',list:[
-  {n:'Pompes classiques',s:4,r:'12–15',t:'Tempo 3/1/2 : descends en 3 sec, pause 1 sec, remonte en 2 sec. La lenteur crée la tension.'},
-  {n:'Pompes inclinées',s:3,r:'12',t:'Mains sur une chaise ou le bord du canapé. Travaille le bas des pectoraux.'},
-  {n:'Pompes déclinées',s:3,r:'10',t:'Pieds sur chaise, mains au sol. Haut des pectoraux et épaules antérieures.'},
-  {n:'Dips entre deux chaises',s:4,r:'10–12',t:'Mains sur le bord de deux chaises. Coudes dans l\'axe, corps droit.',hasAlt:true},
-  {n:'Pike push-up',s:3,r:'10',t:'Hanches en l\'air, triangle inversé, descends la tête entre les mains. Clé pour les épaules.',hasAlt:true},
-  {n:'Planche frontale',s:3,r:'45–60 sec',t:'Corps aligné talons–épaules. Serre les fessiers, respire normalement.'}
+  {n:'Pompes classiques',s:4,r:'12–15',
+   t:'Mains à la largeur des épaules, doigts vers l\'avant. Coudes à 45° du corps (ni plaqués, ni à 90°). Regard vers le sol, pas devant. Tempo 3/1/2 : descends en 3 sec, pause 1 sec en bas, remonte en 2 sec. Corps rigide comme une planche du crâne aux talons.',
+   muscles:'Pectoraux · Triceps · Épaules antérieures',
+   svg:'pompes',
+   url:'https://www.physioatlas.com/exercice/renforcement-push-up/'},
+  {n:'Pompes inclinées',s:3,r:'12',
+   t:'Mains sur le bord d\'une chaise ou du canapé (haut du corps surélevé). Les mains EN HAUT travaillent le BAS du pectoral — c\'est contre-intuitif mais c\'est anatomique. Même position des coudes à 45°. Corps droit, pas les hanches qui cassent.',
+   muscles:'Bas des pectoraux · Triceps',
+   svg:'pompes_inclinees',
+   url:'https://www.physioatlas.com/exercice/renforcement-push-up/'},
+  {n:'Pompes déclinées',s:3,r:'10',
+   t:'Pieds sur la chaise, mains au sol (bas du corps surélevé). Les pieds EN HAUT travaillent le HAUT du pectoral et les épaules. Bras perpendiculaires au sol (pas dans l\'axe du corps). Plus difficile — réduis les reps si besoin.',
+   muscles:'Haut des pectoraux · Épaules antérieures',
+   svg:'pompes_declinees',
+   url:'https://www.physioatlas.com/exercice/renforcement-push-up/'},
+  {n:'Dips au bord du canapé',s:4,r:'10–12',
+   t:'Assis au bord du canapé, mains à la largeur des hanches, doigts pointés vers l\'avant. Avance les fesses hors du canapé, jambes tendues devant. Descends en pliant les coudes vers l\'ARRIÈRE (pas sur les côtés) jusqu\'à 90°. Remonte sans verrouiller les coudes. Ne pas descendre plus bas que 90° — risque épaule.',
+   muscles:'Triceps · Bas des épaules · Bas des pectoraux',
+   svg:'dips_canape'},
+  {n:'Élévations latérales debout',s:3,r:'12–15',
+   t:'2 bouteilles d\'eau 1.5L (une dans chaque main). Debout, dos droit, légère flexion des coudes. Monte les bras sur les côtés jusqu\'à l\'horizontale en gardant les coudes légèrement fléchis. Descente lente et contrôlée (3 sec). Ne pas hausser les épaules. Remplace le pike push-up — même muscle ciblé (deltoïde médian) mais bien plus sécurisé pour la reprise.',
+   muscles:'Deltoïde médian · Trapèzes supérieurs',
+   svg:'elev_laterales',
+   url:'https://www.physioatlas.com/exercice/renforcement-elevation-epaule-scaption/'},
+  {n:'Planche frontale',s:3,r:'45–60 sec',
+   t:'Avant-bras au sol, coudes sous les épaules. Corps parfaitement aligné : talons, hanches, épaules, nuque dans le même plan. Regard vers le sol (pas devant). Serre les fessiers et rentre légèrement le ventre. Ne laisse ni les hanches monter ni le bas du dos creuser.',
+   muscles:'Abdominaux · Stabilisateurs',
+   url:'https://www.physioatlas.com/exercice/renforcement-planche-abdominale/'}
 ]};
 
 const PULL={lbl:'Séance B — Dos · Biceps · Entretien jambes',list:[
-  {n:'Tirages serviette + porte',s:4,r:'12–15',t:'Noue une serviette autour d\'une poignée de porte. Incline le corps, tire vers toi. Dos et biceps.',hasAlt:true},
-  {n:'Superman allongé',s:3,r:'15',t:'Ventre au sol, bras tendus. Lève bras et jambes simultanément, tiens 2 sec. Lombaires.'},
-  {n:'Reverse snow angel',s:3,r:'12',t:'Ventre au sol, bras décollés. Monte les bras en arc. Rhomboïdes et trapèzes.'},
-  {n:'Curl biceps sac lesté',s:3,r:'12–15',t:'Sac à dos + bouteilles. Coude fixe. Supine le poignet en haut du mouvement.'},
-  {n:'Face pull serviette',s:3,r:'12',t:'Serviette à la poignée. Tire les deux bouts vers le visage en écartant les coudes.'},
-  {n:'Planche latérale',s:3,r:'30 sec',t:'Gauche puis droite. Ne laisse pas la hanche descendre.'},
-  {n:'Squats lents (entretien)',s:2,r:'15',t:'Tempo 3/1/2. Entretien seulement, pas développement.',hasAlt:true}
+  {n:'Rowing unilatéral (chaise + sac)',s:4,r:'12–15',
+   t:'Pose un genou et la main du même côté sur le bord d\'une chaise ou du canapé. Dos plat et horizontal (comme une table). Dans l\'autre main : un sac à dos contenant 3–4 kg (2 bouteilles 1.5L + quelques livres). Bras tendu vers le bas. Tire le sac vers ta hanche (pas vers ton épaule) en gardant le coude près du corps. Tiens 1 sec en haut, descends lentement. Échange de côté entre chaque série. Objectif semaine 4–5 : 6–8 kg dans le sac.',
+   muscles:'Grand dorsal · Rhomboïdes · Biceps',
+   svg:'rowing',
+   url:'https://www.physioatlas.com/exercice/epaule-rowing-horizontal-1-bras-neutre/'},
+  {n:'Superman allongé',s:3,r:'15',
+   t:'Allonge-toi ventre au sol, bras tendus devant toi dans le prolongement du corps (comme Superman en vol). Regard vers le sol, NE RELÈVE PAS le cou. Inspire, puis expire en levant simultanément bras et jambes (environ 10–15 cm du sol). Tiens 2 sec en haut, descends en 2 sec. Le mouvement vient des lombaires et des fessiers, pas du cou. Si c\'est trop difficile, commence en levant bras seuls puis jambes seules alternativement.',
+   muscles:'Lombaires · Érecteurs du rachis · Fessiers · Haut du dos',
+   svg:'superman',
+   url:'https://www.physioatlas.com/exercice/renforcement-superman-isometrique/'},
+  {n:'Arc dorsal',s:3,r:'12',
+   t:'Ancien nom : "reverse snow angel". Allongé ventre au sol, bras le long du corps, paumes vers le bas, tout décollé du sol de quelques cm. Glisse les bras lentement sur les côtés puis vers la tête comme si tu faisais un ange dans la neige, mais À L\'ENVERS et en gardant les bras décollés tout le long. Reviens à la position de départ. Le dos travaille en permanence pour maintenir les bras décollés. 3 positions à retenir : bras le long du corps → en croix → au-dessus de la tête.',
+   muscles:'Rhomboïdes · Trapèzes moyens · Deltoïdes postérieurs',
+   svg:'arc_dorsal',
+   url:'https://www.physioatlas.com/exercice/renforcement-superman-dynamique-ange/'},
+  {n:'Curl biceps bouteilles ou sac',s:3,r:'12–15',
+   t:'Option A — bouteilles : une bouteille 1.5L dans chaque main (1.5 kg chacune), tu fais les deux bras en même temps. Option B — sac lesté (3–4 kg) : un bras à la fois, coude calé contre le corps. Dans les deux cas : coude FIXE contre le flanc (ne pas le laisser partir en avant), tourne le poignet vers toi en fin de mouvement (supination), descente lente en 3 sec. Reste debout, dos droit — ne te balance pas pour aider.',
+   muscles:'Biceps · Brachial antérieur',
+   svg:'curl',
+   url:'https://www.physioatlas.com/exercice/renforcement-biceps-curl/'},
+  {n:'Élévations latérales penchées',s:3,r:'12',
+   t:'2 bouteilles 1.5L (une dans chaque main). Penche le buste en avant à environ 45° (comme si tu regardais le sol à 1m devant toi). Dos PLAT — ne l\'arrondis pas. Genoux légèrement fléchis. Bras tendus vers le bas. Monte les bras sur les côtés jusqu\'à l\'horizontale, en gardant les coudes légèrement fléchis. Tiens 1 sec en haut, descends en 3 sec. Erreur fréquente : balancer le dos pour aider — c\'est la montée des bras seuls qui compte.',
+   muscles:'Deltoïdes postérieurs · Rhomboïdes · Trapèzes moyens',
+   svg:'elev_penchees',
+   url:'https://www.physioatlas.com/exercice/renforcement-elevation-epaule-scaption/'},
+  {n:'Planche latérale',s:3,r:'30 sec',
+   t:'Sur l\'avant-bras, coude sous l\'épaule. Corps aligné : cheville, hanche, épaule dans le même plan vertical. Ne laisse pas la hanche tomber ni monter. Regard droit devant. Fais gauche + droite. Progression : lever la jambe du dessus si trop facile.',
+   muscles:'Obliques · Carré des lombes · Épaule',
+   url:'https://www.physioatlas.com/exercice/renforcement-planche-laterale/'},
+  {n:'Squats lents (entretien)',s:2,r:'15',
+   t:'Pieds à la largeur des épaules, orteils légèrement ouverts. Descends en 3 sec en poussant les genoux dans l\'axe des orteils (pas vers l\'intérieur). Poids sur les talons — tu dois pouvoir lever les orteils en bas du mouvement. Remonte en 2 sec sans verrouiller les genoux en haut. C\'est de l\'entretien : 2 séries suffisent, ne cherche pas à progresser ici.',
+   muscles:'Quadriceps · Fessiers · Ischio-jambiers',
+   hasAlt:true}
 ]};
 
 const SWIM_PLAN=[
@@ -971,8 +1025,12 @@ function exoCard(plan,dayKey){
     h+=`<div class="exo ${allDone?'done-ex':''}">
       <div class="exo-l">
         <div class="exo-name">${ex.n}${ex.replaced?'<span class="exo-replaced"> · remplacé</span>':''}</div>
+        ${ex.muscles?`<div class="exo-muscles">${ex.muscles}</div>`:''}
         <div class="exo-tip">${ex.t}</div>
-        ${ex.hasAlt?`<span class="exo-alt" onclick="openAlt('${ex.replaced?ex.origName:ex.n}',event,'${dayKey}',${i})">Remplacer ↓</span>`:''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+          ${ex.url?`<a class="btn-video" href="${ex.url}" target="_blank">▶ Voir le mouvement</a>`:''}
+          ${ex.hasAlt?`<span class="exo-alt" onclick="openAlt('${ex.replaced?ex.origName:ex.n}',event,'${dayKey}',${i})" style="margin-top:0">Remplacer ↓</span>`:''}
+        </div>
       </div>
       <div class="exo-r">
         <div class="exo-b"><div class="exo-sets">${ex.s}×</div><div class="exo-reps">${ex.r}</div></div>
@@ -999,7 +1057,7 @@ function toggleNutri(key){
 
 function resolveExo(e,i,dayKey){
   const k=dayKey+'-'+i;
-  if(replacements[k]){const r=replacements[k];return{n:r.n,t:r.t,s:r.s,r:r.r,hasAlt:e.hasAlt,replaced:true,origName:e.n}}
+  if(replacements[k]){const r=replacements[k];return{n:r.n,t:r.t,s:r.s,r:r.r,hasAlt:e.hasAlt,replaced:true,origName:e.n,url:e.url}}
   return e;
 }
 
